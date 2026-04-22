@@ -13,14 +13,32 @@
       <p class="subtitle">Collect all keys and escape the school.</p>
     </header>
 
-    <section id="startScreen" class="panel screen">
-      <h2>Start Game</h2>
-      <p>You are the survivor.</p>
-      <p>The killer is the rabbit monster.</p>
-      <p>Click connected rooms to move.</p>
-      <p>Collect all 4 keys, then go to the Exit.</p>
-      <p>If the killer catches you 3 times, you lose.</p>
-      <button id="startBtn" class="main-btn">Start</button>
+    <section id="startScreen" class="start-screen panel screen">
+      <div class="start-card">
+        <p class="eyebrow">HORROR ESCAPE GAME</p>
+        <h2 class="game-title">Rabbit Escape</h2>
+        <p class="start-tagline">Escape the school before the killer rabbit finds you.</p>
+
+        <div class="start-characters">
+          <div class="start-character">
+            <img src="assets/player.png" alt="Player" class="start-character-img hero-preview">
+            <p><strong>You</strong><br>Collect the keys</p>
+          </div>
+          <div class="start-character">
+            <img src="assets/killer.png" alt="Killer rabbit" class="start-character-img killer-preview">
+            <p><strong>Killer Rabbit</strong><br>Do not get caught</p>
+          </div>
+        </div>
+
+        <div class="start-rules">
+          <div class="rule-pill">Click connected rooms to move</div>
+          <div class="rule-pill">Collect all 4 keys</div>
+          <div class="rule-pill">Reach the Exit to win</div>
+          <div class="rule-pill">Caught 3 times = lose</div>
+        </div>
+
+        <button id="startBtn" class="main-btn start-main-btn">Start Escape</button>
+      </div>
     </section>
 
     <section id="hud" class="panel hidden">
@@ -60,10 +78,33 @@
       <p id="messageText">Game messages appear here.</p>
     </section>
 
-    <section id="endScreen" class="panel screen hidden">
-      <h2 id="endTitle">Game Over</h2>
-      <p id="endText">The killer rabbit caught you.</p>
-      <button id="restartBtn" class="main-btn">Play Again</button>
+    <section id="endScreen" class="panel screen end-screen hidden">
+      <div class="end-card">
+        <p id="endEyebrow" class="end-eyebrow">ROUND COMPLETE</p>
+        <h2 id="endTitle" class="end-title">You Win!</h2>
+        <p id="endText" class="end-text">You escaped the school.</p>
+
+        <div class="end-stats">
+          <div class="end-stat">
+            <span class="end-stat-label">Time</span>
+            <span id="endTime" class="end-stat-value">--</span>
+          </div>
+          <div class="end-stat">
+            <span class="end-stat-label">Hearts Left</span>
+            <span id="endHearts" class="end-stat-value">--</span>
+          </div>
+          <div class="end-stat">
+            <span class="end-stat-label">Keys</span>
+            <span id="endKeys" class="end-stat-value">--</span>
+          </div>
+          <div class="end-stat">
+            <span class="end-stat-label">Best Time</span>
+            <span id="endBestTime" class="end-stat-value">--</span>
+          </div>
+        </div>
+
+        <button id="restartBtn" class="main-btn start-main-btn">Play Again</button>
+      </div>
     </section>
   </div>
 
