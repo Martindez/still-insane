@@ -10,32 +10,33 @@ body {
 }
 
 .app {
-  max-width: 1100px;
+  max-width: 1050px;
   margin: 0 auto;
-  padding: 14px;
+  padding: 10px;
 }
 
 .topbar {
   text-align: center;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .topbar h1 {
-  margin: 8px 0;
+  margin: 6px 0;
   font-size: 2rem;
 }
 
 .subtitle {
   color: #d3d3d3;
   margin: 0;
+  font-size: 1rem;
 }
 
 .panel {
   background: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 16px;
-  padding: 14px;
-  margin-bottom: 14px;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .screen {
@@ -64,14 +65,15 @@ body {
 
 .hud-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(140px, 1fr));
-  gap: 10px;
-  margin-bottom: 12px;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 6px 12px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
 }
 
 .danger-bar-wrap {
   width: 100%;
-  height: 16px;
+  height: 12px;
   background: #333;
   border-radius: 999px;
   overflow: hidden;
@@ -105,8 +107,8 @@ body {
 .room-marker {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 2px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.02);
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 18px;
   cursor: pointer;
   z-index: 3;
@@ -116,12 +118,12 @@ body {
 }
 
 .room-marker:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .room-marker.connected {
-  border-color: rgba(80,220,120,0.75);
-  background: rgba(80,220,120,0.14);
+  border-color: rgba(80, 220, 120, 0.75);
+  background: rgba(80, 220, 120, 0.14);
 }
 
 .room-marker.locked {
@@ -130,12 +132,22 @@ body {
 
 .room-marker.current {
   border-color: white;
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.18);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
 }
 
 .room-marker.killer-room {
-  border-color: rgba(255,0,0,0.95);
-  box-shadow: 0 0 0 3px rgba(255,0,0,0.16);
+  border-color: rgba(255, 0, 0, 0.95);
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.16);
+}
+
+.room-marker.exit-open {
+  border-color: #4cff72;
+  box-shadow: 0 0 0 3px rgba(76, 255, 114, 0.2);
+  background: rgba(76, 255, 114, 0.12);
+}
+
+.room-marker.room-cleared {
+  opacity: 0.18;
 }
 
 .room-marker.electrical {
@@ -192,15 +204,15 @@ body {
 }
 
 .player-token {
-  width: 78px;
-  height: 78px;
+  width: 74px;
+  height: 74px;
   object-fit: contain;
   opacity: 1;
   filter:
     drop-shadow(0 0 2px #ffffff)
     drop-shadow(0 0 8px #ffffff)
-    drop-shadow(0 0 16px rgba(80,180,255,1))
-    drop-shadow(0 0 30px rgba(80,180,255,0.9));
+    drop-shadow(0 0 16px rgba(80, 180, 255, 0.95))
+    drop-shadow(0 0 28px rgba(80, 180, 255, 0.75));
   animation: heroBounce 1.2s infinite alternate;
 }
 
@@ -211,7 +223,7 @@ body {
   filter:
     drop-shadow(0 0 10px red)
     drop-shadow(0 0 24px darkred)
-    drop-shadow(0 0 34px rgba(120,0,0,0.95));
+    drop-shadow(0 0 34px rgba(120, 0, 0, 0.95));
   animation: killerPulse 0.65s infinite alternate;
 }
 
@@ -237,11 +249,13 @@ body {
   margin: 0;
   color: #f2d7d7;
   min-height: 24px;
+  font-size: 1rem;
 }
 
 @media (max-width: 700px) {
   .hud-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    font-size: 0.9rem;
   }
 
   .room-marker.electrical,
@@ -254,12 +268,16 @@ body {
   }
 
   .player-token {
-  width: 62px;
-  height: 62px;
-}
+    width: 58px;
+    height: 58px;
+  }
 
   .killer-token {
     width: 64px;
     height: 64px;
+  }
+
+  #messageText {
+    font-size: 0.95rem;
   }
 }
