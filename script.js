@@ -25,6 +25,7 @@ let hearts = 3;
 let maxHearts = 3;
 let gameStarted = false;
 let startTime = 0;
+let isBusy = false;
 
 const startScreen = document.getElementById("startScreen");
 const hud = document.getElementById("hud");
@@ -56,14 +57,19 @@ startBtn.addEventListener("click", startGame);
 restartBtn.addEventListener("click", resetGame);
 
 roomButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (!gameStarted) return;
-    movePlayer(button.dataset.room);
+  button.addEventListener("click", async () => {
+    if (!gameStarted || isBusy) return;
+    await movePlayer(button.dataset.room);
   });
 });
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function startGame() {
   gameStarted = true;
+  isBusy = false;
   startTime = Date.now();
 
   startScreen.classList.add("hidden");
@@ -83,6 +89,7 @@ function resetGame() {
   hearts = maxHearts;
   gameStarted = false;
   startTime = 0;
+  isBusy = false;
 
   startScreen.classList.remove("hidden");
   hud.classList.add("hidden");
@@ -94,14 +101,70 @@ function resetGame() {
   updateUI();
 }
 
-function movePlayer(targetRoom) {
+async function movePlayer(targetRoom) {
   if (!rooms[playerRoom].includes(targetRoom)) {
     showMessage("You can only move to connected rooms.");
     return;
   }
 
-  playerRoom = targetRoom;
+  isBusy = true;
 
+  flashSelectedRoom(targetRoom);
+  showMessage(`Moving to ${targetRoom}...`);
+  await sleep(140);
+
+  playerRoom = targetRoom;
+  updateUI();
+  await sleep(320);
+
+  handleRoomArrival();
+
+  if (!gameStarted) {
+    isBusy = false;
+    return;
+  }
+
+  if (playerRoom === killerRoom) {
+    playerHit();
+    if (!gameStarted) {
+      isBusy = false;
+      return;
+    }
+    updateUI();
+    await sleep(250);
+  }
+
+  showMessage("The killer is moving...");
+  addKillerTurnEffect(true);
+  await sleep(260);
+
+  moveKiller();
+  updateUI();
+  await sleep(320);
+  addKillerTurnEffect(false);
+
+  if (playerRoom === killerRoom) {
+    playerHit();
+    if (!gameStarted) {
+      isBusy = false;
+      return;
+    }
+    updateUI();
+    isBusy = false;
+    return;
+  }
+
+  if (playerRoom === "Exit" && exitIsOpen()) {
+    winGame();
+    isBusy = false;
+    return;
+  }
+
+  updateUI();
+  isBusy = false;
+}
+
+function handleRoomArrival() {
   if (keyRooms.includes(playerRoom) && !collectedKeys.includes(playerRoom)) {
     collectedKeys.push(playerRoom);
 
@@ -111,30 +174,26 @@ function movePlayer(targetRoom) {
       const keysLeft = keyRooms.length - collectedKeys.length;
       showMessage(`You found a key in ${playerRoom}. ${keysLeft} key left.`);
     }
-  } else if (playerRoom === "Exit" && !exitIsOpen()) {
-    showMessage("The Exit is locked. Collect all 4 keys first.");
-  } else {
-    showMessage(`You moved to ${playerRoom}.`);
-  }
-
-  if (playerRoom === killerRoom) {
-    playerHit();
-    if (!gameStarted) return;
-  }
-
-  moveKiller();
-
-  if (playerRoom === killerRoom) {
-    playerHit();
-    if (!gameStarted) return;
-  }
-
-  if (playerRoom === "Exit" && exitIsOpen()) {
-    winGame();
     return;
   }
 
-  updateUI();
+  if (playerRoom === "Exit" && !exitIsOpen()) {
+    showMessage("The Exit is locked. Collect all 4 keys first.");
+    return;
+  }
+
+  if (playerRoom === "Exit" && exitIsOpen()) {
+    showMessage("Escape now!");
+    return;
+  }
+
+  const distance = getDistance(playerRoom, killerRoom);
+
+  if (distance === 1) {
+    showMessage("Warning: The killer is very close!");
+  } else {
+    showMessage(`You moved to ${playerRoom}.`);
+  }
 }
 
 function moveKiller() {
@@ -186,12 +245,12 @@ function playerHit() {
   }
 
   playerRoom = "Playground";
-  showMessage(`Caught! You lost 1 heart. ${hearts} heart${hearts === 1 ? "" : "s"} left. Back to Playground.`);
-  updateUI();
+  showMessage(`Caught! You lost 1 heart. ${hearts} left. Back to Playground.`);
 }
 
 function loseGame() {
   gameStarted = false;
+  isBusy = false;
   hud.classList.add("hidden");
   gameWrap.classList.add("hidden");
   messageBox.classList.add("hidden");
@@ -203,6 +262,7 @@ function loseGame() {
 
 function winGame() {
   gameStarted = false;
+  isBusy = false;
   hud.classList.add("hidden");
   gameWrap.classList.add("hidden");
   messageBox.classList.add("hidden");
@@ -245,6 +305,7 @@ function updateDanger() {
 
   dangerText.textContent = label;
   dangerBar.style.width = `${width}%`;
+  dangerBar.classList.toggle("danger-high", d <= 1);
 }
 
 function updateHearts() {
@@ -273,16 +334,39 @@ function setTokenPosition(token, roomName) {
   token.style.left = `${roomPositions[roomName].left}%`;
 }
 
+function flashSelectedRoom(roomName) {
+  const button = document.querySelector(`.room-marker[data-room="${roomName}"]`);
+  if (!button) return;
+
+  button.classList.add("selected-room");
+  setTimeout(() => {
+    button.classList.remove("selected-room");
+  }, 260);
+}
+
+function addKillerTurnEffect(isActive) {
+  const board = document.querySelector(".map-board");
+  if (!board) return;
+  board.classList.toggle("killer-turn", isActive);
+}
+
 function updateBoard() {
   roomButtons.forEach((button) => {
     const room = button.dataset.room;
 
-    button.classList.remove("connected", "locked", "current", "killer-room", "exit-open", "room-cleared");
+    button.classList.remove(
+      "connected",
+      "locked",
+      "current",
+      "killer-room",
+      "exit-open",
+      "room-cleared"
+    );
 
     if (room === playerRoom) {
       button.classList.add("current");
       button.disabled = true;
-    } else if (rooms[playerRoom].includes(room)) {
+    } else if (!isBusy && rooms[playerRoom].includes(room)) {
       button.classList.add("connected");
       button.disabled = false;
     } else {
