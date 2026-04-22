@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rabbit Escape School</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <h1>Rabbit Escape</h1>
+      <p class="subtitle">Collect all keys and escape the school.</p>
+    </header>
+
+    <section id="startScreen" class="panel screen">
+      <h2>Start Game</h2>
+      <p>You are the white rabbit.</p>
+      <p>The killer is the bloody rabbit.</p>
+      <p>Click connected rooms to move. Get all keys, then go to Exit.</p>
+      <button id="startBtn" class="main-btn">Start</button>
+    </section>
+
+    <section id="hud" class="panel hidden">
+      <div class="hud-grid">
+        <div><strong>Keys:</strong> <span id="keyCount">0</span>/4</div>
+        <div><strong>Hearts:</strong> <span id="hearts">❤️ ❤️ ❤️</span></div>
+        <div><strong>Danger:</strong> <span id="dangerText">Low</span></div>
+        <div><strong>Player:</strong> <span id="playerRoom">Playground</span></div>
+        <div><strong>Killer:</strong> <span id="killerRoom">Kitchen</span></div>
+        <div><strong>Best Time:</strong> <span id="bestTime">--</span></div>
+      </div>
+
+      <div class="danger-bar-wrap">
+        <div id="dangerBar" class="danger-bar"></div>
+      </div>
+    </section>
+
+    <section id="gameWrap" class="panel hidden">
+      <div class="map-board">
+        <img src="assets/map.jpg" alt="School map" class="map-image" />
+
+        <button class="room-marker" data-room="Electrical" style="top: 18%; left: 20%;">Electrical</button>
+        <button class="room-marker" data-room="Gym" style="top: 18%; left: 50%;">Gym</button>
+        <button class="room-marker" data-room="Kitchen" style="top: 18%; left: 80%;">Kitchen</button>
+        <button class="room-marker" data-room="Security" style="top: 52%; left: 14%;">Security</button>
+        <button class="room-marker" data-room="Playground" style="top: 56%; left: 50%;">Playground</button>
+        <button class="room-marker" data-room="Exit" style="top: 83%; left: 50%;">Exit</button>
+
+        <div id="playerToken" class="token player-token">🐰</div>
+        <div id="killerToken" class="token killer-token">🩸</div>
+      </div>
+    </section>
+
+    <section id="messageBox" class="panel hidden">
+      <p id="messageText">Game messages appear here.</p>
+    </section>
+
+    <section id="endScreen" class="panel screen hidden">
+      <h2 id="endTitle">Game Over</h2>
+      <p id="endText">The bloody rabbit caught you.</p>
+      <button id="restartBtn" class="main-btn">Play Again</button>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
