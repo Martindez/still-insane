@@ -34,6 +34,8 @@ const endScreen = document.getElementById("endScreen");
 const endTitle = document.getElementById("endTitle");
 const endText = document.getElementById("endText");
 
+const goalText = document.getElementById("goalText");
+const exitStateText = document.getElementById("exitState");
 const keyCountText = document.getElementById("keyCount");
 const heartsText = document.getElementById("hearts");
 const dangerText = document.getElementById("dangerText");
@@ -243,22 +245,27 @@ function updateDanger() {
 
   dangerText.textContent = label;
   dangerBar.style.width = `${width}%`;
-
-  if (gameStarted) {
-    if (d === 1) {
-      if (exitIsOpen()) {
-        showMessage("The killer is very close! The Exit is OPEN — run!");
-      } else {
-        showMessage("Warning: The killer is very close!");
-      }
-    } else if (exitIsOpen() && playerRoom !== "Exit") {
-      showMessage("All keys collected! The Exit is OPEN!");
-    }
-  }
 }
 
 function updateHearts() {
   heartsText.textContent = "❤️ ".repeat(hearts).trim();
+}
+
+function updateGoalStatus() {
+  if (!gameStarted) {
+    goalText.textContent = "Find 4 keys";
+    exitStateText.textContent = "Locked";
+    return;
+  }
+
+  if (exitIsOpen()) {
+    goalText.textContent = "Reach the Exit";
+    exitStateText.textContent = "OPEN";
+  } else {
+    const keysLeft = keyRooms.length - collectedKeys.length;
+    goalText.textContent = `Find ${keysLeft} more key${keysLeft === 1 ? "" : "s"}`;
+    exitStateText.textContent = "Locked";
+  }
 }
 
 function setTokenPosition(token, roomName) {
@@ -300,30 +307,15 @@ function updateBoard() {
   setTokenPosition(killerToken, killerRoom);
 }
 
-function updateGoalMessage() {
-  if (!gameStarted) return;
-
-  if (exitIsOpen()) {
-    messageText.textContent = "Goal: Reach the Exit now!";
-    return;
-  }
-
-  const keysLeft = keyRooms.length - collectedKeys.length;
-  messageText.textContent = `Goal: Find ${keysLeft} more key${keysLeft === 1 ? "" : "s"}.`;
-}
-
 function updateUI() {
   keyCountText.textContent = collectedKeys.length;
   playerRoomText.textContent = playerRoom;
   killerRoomText.textContent = killerRoom;
   updateHearts();
   updateBestTime();
+  updateGoalStatus();
   updateBoard();
   updateDanger();
-
-  if (!messageText.textContent || messageText.textContent.startsWith("Goal:")) {
-    updateGoalMessage();
-  }
 }
 
 function showMessage(text) {
