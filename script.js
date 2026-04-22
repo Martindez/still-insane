@@ -19,9 +19,10 @@ const roomPositions = {
 };
 
 let playerRoom = "Playground";
-let killerRoom = "Kitchen";
+let killerRoom = "Security";
 let collectedKeys = [];
 let hearts = 3;
+let maxHearts = 3;
 let gameStarted = false;
 let startTime = 0;
 
@@ -69,15 +70,15 @@ function startGame() {
   messageBox.classList.remove("hidden");
   endScreen.classList.add("hidden");
 
-  showMessage("Collect all 4 keys, then escape.");
+  showMessage("Goal: Collect all 4 keys, then reach the Exit.");
   updateUI();
 }
 
 function resetGame() {
   playerRoom = "Playground";
-  killerRoom = "Kitchen";
+  killerRoom = "Security";
   collectedKeys = [];
-  hearts = 3;
+  hearts = maxHearts;
   gameStarted = false;
   startTime = 0;
 
@@ -87,12 +88,13 @@ function resetGame() {
   messageBox.classList.add("hidden");
   endScreen.classList.add("hidden");
 
+  showMessage("Click Start to begin.");
   updateUI();
 }
 
 function movePlayer(targetRoom) {
   if (!rooms[playerRoom].includes(targetRoom)) {
-    showMessage("You can only click connected rooms.");
+    showMessage("You can only move to connected rooms.");
     return;
   }
 
@@ -100,9 +102,15 @@ function movePlayer(targetRoom) {
 
   if (keyRooms.includes(playerRoom) && !collectedKeys.includes(playerRoom)) {
     collectedKeys.push(playerRoom);
-    showMessage(`You found a key in ${playerRoom}.`);
-  } else if (playerRoom === "Exit" && collectedKeys.length < 4) {
-    showMessage("The exit is locked. Get all 4 keys first.");
+
+    if (collectedKeys.length === keyRooms.length) {
+      showMessage("All 4 keys collected! The Exit is OPEN!");
+    } else {
+      const keysLeft = keyRooms.length - collectedKeys.length;
+      showMessage(`You found a key in ${playerRoom}. ${keysLeft} key left.`);
+    }
+  } else if (playerRoom === "Exit" && !exitIsOpen()) {
+    showMessage("The Exit is locked. Collect all 4 keys first.");
   } else {
     showMessage(`You moved to ${playerRoom}.`);
   }
@@ -119,7 +127,7 @@ function movePlayer(targetRoom) {
     if (!gameStarted) return;
   }
 
-  if (playerRoom === "Exit" && collectedKeys.length === 4) {
+  if (playerRoom === "Exit" && exitIsOpen()) {
     winGame();
     return;
   }
@@ -130,7 +138,7 @@ function movePlayer(targetRoom) {
 function moveKiller() {
   const path = shortestPath(killerRoom, playerRoom);
 
-  if (path.length > 1 && Math.random() < 0.75) {
+  if (path.length > 1 && Math.random() < 0.85) {
     killerRoom = path[1];
   } else {
     const choices = rooms[killerRoom];
@@ -163,6 +171,10 @@ function getDistance(a, b) {
   return Math.max(0, shortestPath(a, b).length - 1);
 }
 
+function exitIsOpen() {
+  return collectedKeys.length === keyRooms.length;
+}
+
 function playerHit() {
   hearts -= 1;
 
@@ -172,7 +184,7 @@ function playerHit() {
   }
 
   playerRoom = "Playground";
-  showMessage("The bloody rabbit hit you. You lost 1 heart.");
+  showMessage(`Caught! You lost 1 heart. ${hearts} heart${hearts === 1 ? "" : "s"} left. Back to Playground.`);
   updateUI();
 }
 
@@ -184,7 +196,7 @@ function loseGame() {
   endScreen.classList.remove("hidden");
 
   endTitle.textContent = "Game Over";
-  endText.textContent = "The bloody rabbit caught you.";
+  endText.textContent = "The killer rabbit caught you 3 times. Collect all 4 keys and escape next time.";
 }
 
 function winGame() {
@@ -201,8 +213,9 @@ function winGame() {
     localStorage.setItem("rabbitEscapeBestTime", String(totalSeconds));
   }
 
-  endTitle.textContent = "You Win!";
-  endText.textContent = `You escaped in ${totalSeconds} seconds.`;
+  endTitle.textContent = "You Escaped!";
+  endText.textContent = `You got all 4 keys and escaped in ${totalSeconds}s with ${hearts} heart${hearts === 1 ? "" : "s"} left.`;
+
   updateBestTime();
 }
 
@@ -218,11 +231,11 @@ function updateDanger() {
   let width = 20;
 
   if (d === 0) {
-    label = "Extreme";
+    label = "Caught";
     width = 100;
   } else if (d === 1) {
     label = "High";
-    width = 80;
+    width = 85;
   } else if (d === 2) {
     label = "Medium";
     width = 55;
@@ -230,6 +243,18 @@ function updateDanger() {
 
   dangerText.textContent = label;
   dangerBar.style.width = `${width}%`;
+
+  if (gameStarted) {
+    if (d === 1) {
+      if (exitIsOpen()) {
+        showMessage("The killer is very close! The Exit is OPEN — run!");
+      } else {
+        showMessage("Warning: The killer is very close!");
+      }
+    } else if (exitIsOpen() && playerRoom !== "Exit") {
+      showMessage("All keys collected! The Exit is OPEN!");
+    }
+  }
 }
 
 function updateHearts() {
@@ -245,7 +270,7 @@ function updateBoard() {
   roomButtons.forEach((button) => {
     const room = button.dataset.room;
 
-    button.classList.remove("connected", "locked", "current", "killer-room");
+    button.classList.remove("connected", "locked", "current", "killer-room", "exit-open", "room-cleared");
 
     if (room === playerRoom) {
       button.classList.add("current");
@@ -261,10 +286,30 @@ function updateBoard() {
     if (room === killerRoom) {
       button.classList.add("killer-room");
     }
+
+    if (collectedKeys.includes(room)) {
+      button.classList.add("room-cleared");
+    }
+
+    if (room === "Exit" && exitIsOpen()) {
+      button.classList.add("exit-open");
+    }
   });
 
   setTokenPosition(playerToken, playerRoom);
   setTokenPosition(killerToken, killerRoom);
+}
+
+function updateGoalMessage() {
+  if (!gameStarted) return;
+
+  if (exitIsOpen()) {
+    messageText.textContent = "Goal: Reach the Exit now!";
+    return;
+  }
+
+  const keysLeft = keyRooms.length - collectedKeys.length;
+  messageText.textContent = `Goal: Find ${keysLeft} more key${keysLeft === 1 ? "" : "s"}.`;
 }
 
 function updateUI() {
@@ -272,9 +317,13 @@ function updateUI() {
   playerRoomText.textContent = playerRoom;
   killerRoomText.textContent = killerRoom;
   updateHearts();
-  updateDanger();
   updateBestTime();
   updateBoard();
+  updateDanger();
+
+  if (!messageText.textContent || messageText.textContent.startsWith("Goal:")) {
+    updateGoalMessage();
+  }
 }
 
 function showMessage(text) {
