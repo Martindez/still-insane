@@ -36,6 +36,7 @@ let audioContext = null;
 let lastWarningTime = 0;
 
 const startBtn = document.getElementById("startBtn");
+const restartBtn = document.getElementById("restartBtn");
 const startScreen = document.getElementById("startScreen");
 const hud = document.getElementById("hud");
 const gameWrap = document.getElementById("gameWrap");
@@ -54,20 +55,28 @@ const dangerText = document.getElementById("dangerText");
 const dangerBar = document.getElementById("dangerBar");
 const messageText = document.getElementById("messageText");
 const goalText = document.getElementById("goalText");
+const bestTimeText = document.getElementById("bestTime");
 const flashOverlay = document.getElementById("flashOverlay");
+
+const endEyebrow = document.getElementById("endEyebrow");
+const endTitle = document.getElementById("endTitle");
+const endText = document.getElementById("endText");
+const endTime = document.getElementById("endTime");
+const endHearts = document.getElementById("endHearts");
+const endKeys = document.getElementById("endKeys");
+const endBestTime = document.getElementById("endBestTime");
 
 document.querySelectorAll(".room").forEach((btn) => {
   btn.addEventListener("click", () => move(btn.dataset.room));
 });
 
 startBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", resetGame);
 
 function initAudio() {
   if (!audioContext) {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (AudioCtx) {
-      audioContext = new AudioCtx();
-    }
+    if (AudioCtx) audioContext = new AudioCtx();
   }
   if (audioContext && audioContext.state === "suspended") {
     audioContext.resume();
@@ -166,6 +175,26 @@ function startGame() {
   endScreen.classList.add("hidden");
 
   msg("Goal: Collect all 5 keys, then reach the Exit.");
+  update();
+}
+
+function resetGame() {
+  player = "Dining";
+  killer = "Storage";
+  hearts = 3;
+  keys = [];
+  got = [];
+  gameStarted = false;
+  startTime = 0;
+  lastWarningTime = 0;
+
+  startScreen.classList.remove("hidden");
+  hud.classList.add("hidden");
+  gameWrap.classList.add("hidden");
+  messageBox.classList.add("hidden");
+  endScreen.classList.add("hidden");
+
+  msg("Press Start to begin.");
   update();
 }
 
@@ -296,8 +325,15 @@ function win() {
 
   playWinSound();
 
-  document.getElementById("endTitle").textContent = "You Escaped!";
-  document.getElementById("endText").textContent = `You beat Level 2 in ${seconds}s with ${hearts} heart${hearts === 1 ? "" : "s"} left.`;
+  endEyebrow.textContent = "ROUND COMPLETE";
+  endTitle.textContent = "You Escaped!";
+  endText.textContent = "You got all 5 keys and escaped the pizzaria.";
+  endTime.textContent = `${seconds}s`;
+  endHearts.textContent = `${hearts}`;
+  endKeys.textContent = `${got.length}/${totalKeys}`;
+  endBestTime.textContent = `${localStorage.getItem(bestKey)}s`;
+
+  updateBest();
 }
 
 function lose() {
@@ -307,8 +343,15 @@ function lose() {
   messageBox.classList.add("hidden");
   endScreen.classList.remove("hidden");
 
-  document.getElementById("endTitle").textContent = "Game Over";
-  document.getElementById("endText").textContent = "The killer rabbit got you in the pizzaria.";
+  endEyebrow.textContent = "GAME OVER";
+  endTitle.textContent = "You Were Caught!";
+  endText.textContent = "The killer rabbit got you in the pizzaria.";
+  endTime.textContent = "--";
+  endHearts.textContent = "0";
+  endKeys.textContent = `${got.length}/${totalKeys}`;
+  endBestTime.textContent = localStorage.getItem("rabbitEscapePizzariaBestTime")
+    ? `${localStorage.getItem("rabbitEscapePizzariaBestTime")}s`
+    : "--";
 }
 
 function place(el, room) {
@@ -319,11 +362,23 @@ function place(el, room) {
 function updateGoal() {
   if (!goalText) return;
 
+  if (!gameStarted) {
+    goalText.textContent = "Find 5 keys";
+    return;
+  }
+
   if (got.length === totalKeys) {
     goalText.textContent = "Reach the Exit";
   } else {
     const left = totalKeys - got.length;
     goalText.textContent = `Find ${left} more key${left === 1 ? "" : "s"}`;
+  }
+}
+
+function updateBest() {
+  const best = localStorage.getItem("rabbitEscapePizzariaBestTime");
+  if (bestTimeText) {
+    bestTimeText.textContent = best ? `${best}s` : "--";
   }
 }
 
@@ -342,6 +397,7 @@ function update() {
   dangerBar.style.width = d <= 1 ? "90%" : d === 2 ? "55%" : "20%";
 
   updateGoal();
+  updateBest();
 
   document.querySelectorAll(".room").forEach((btn) => {
     const room = btn.dataset.room;
