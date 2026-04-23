@@ -60,10 +60,17 @@ const flashOverlay = document.getElementById("flashOverlay");
 
 const startBtn = document.getElementById("startBtn");
 const restartBtn = document.getElementById("restartBtn");
+const nextLevelBtn = document.getElementById("nextLevelBtn");
 const roomButtons = document.querySelectorAll(".room-marker");
 
 startBtn.addEventListener("click", startGame);
 restartBtn.addEventListener("click", resetGame);
+
+if (nextLevelBtn) {
+  nextLevelBtn.addEventListener("click", () => {
+    window.location.href = "/rabbit-escape-school/pizzaria/";
+  });
+}
 
 roomButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -167,6 +174,10 @@ function startGame() {
   messageBox.classList.remove("hidden");
   endScreen.classList.add("hidden");
 
+  if (nextLevelBtn) {
+    nextLevelBtn.classList.add("hidden");
+  }
+
   showMessage("Goal: Collect all 4 keys, then reach the Exit.");
   updateUI();
 }
@@ -186,6 +197,10 @@ function resetGame() {
   gameWrap.classList.add("hidden");
   messageBox.classList.add("hidden");
   endScreen.classList.add("hidden");
+
+  if (nextLevelBtn) {
+    nextLevelBtn.classList.add("hidden");
+  }
 
   showMessage("Press Start to begin.");
   updateUI();
@@ -308,6 +323,10 @@ function loseGame() {
   endHearts.textContent = "0";
   endKeys.textContent = `${collectedKeys.length}/${totalKeys}`;
   endBestTime.textContent = localStorage.getItem("rabbitEscapeBestTime") ? `${localStorage.getItem("rabbitEscapeBestTime")}s` : "--";
+
+  if (nextLevelBtn) {
+    nextLevelBtn.classList.add("hidden");
+  }
 }
 
 function winGame() {
@@ -333,6 +352,10 @@ function winGame() {
   endHearts.textContent = `${hearts}`;
   endKeys.textContent = `${collectedKeys.length}/${totalKeys}`;
   endBestTime.textContent = `${localStorage.getItem("rabbitEscapeBestTime")}s`;
+
+  if (nextLevelBtn) {
+    nextLevelBtn.classList.remove("hidden");
+  }
 
   updateBestTime();
 }
