@@ -7,138 +7,40 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="flashOverlay" class="flash-overlay"></div>
+  <div class="menu-shell">
+    <div class="menu-overlay"></div>
 
-  <div class="app">
+    <main class="menu-content">
+      <header class="hero">
+        <h1>Rabbit Escape</h1>
+        <p>Collect keys. Escape. Survive.</p>
+      </header>
 
-    <header class="topbar">
-      <h1>Rabbit Escape</h1>
-      <p class="subtitle">Level 1 · School Escape</p>
-    </header>
+      <section class="menu-actions">
+        <button id="playBtn" class="menu-btn primary">Play Level 1</button>
+        <button id="level2Btn" class="menu-btn secondary">Play Level 2</button>
+      </section>
 
-    <section id="startScreen" class="panel screen">
-      <div class="start-card">
-        <p class="eyebrow">LEVEL 1</p>
-        <h2 class="game-title">School Escape</h2>
-        <p class="start-tagline">
-          Collect all 4 keys, avoid the killer rabbit, and escape through the Exit.
-        </p>
+      <section class="level-cards">
+        <button class="level-card level1" id="cardLevel1">
+          <span class="level-label">LEVEL 1</span>
+          <strong>School Escape</strong>
+          <span>Collect 4 keys and escape</span>
+        </button>
 
-        <div class="start-characters">
-          <div class="start-character">
-            <img
-              src="assets/player.png"
-              alt="Player"
-              class="start-character-img hero-preview"
-            />
-            <p><strong>You</strong><br />Find the keys</p>
-          </div>
+        <button class="level-card level2" id="cardLevel2">
+          <span class="level-label">LEVEL 2</span>
+          <strong>Venezia Pizzaria</strong>
+          <span>Collect 5 keys and escape</span>
+        </button>
 
-          <div class="start-character">
-            <img
-              src="assets/killer.png"
-              alt="Killer rabbit"
-              class="start-character-img killer-preview"
-            />
-            <p><strong>Killer Rabbit</strong><br />Do not get caught</p>
-          </div>
+        <div class="level-card locked">
+          <span class="level-label">LEVEL 3</span>
+          <strong>Coming Soon</strong>
+          <span>More maps later</span>
         </div>
-
-        <div class="start-rules">
-          <div class="rule-pill">Click connected rooms to move</div>
-          <div class="rule-pill">4 random key rooms each round</div>
-          <div class="rule-pill">Get all keys to unlock Exit</div>
-          <div class="rule-pill">Caught 3 times = lose</div>
-        </div>
-
-        <button id="startBtn" class="main-btn start-main-btn">Start Level 1</button>
-      </div>
-    </section>
-
-    <section id="hud" class="panel hidden">
-      <div class="hud-grid">
-        <div><strong>Goal:</strong> <span id="goalText">Find 4 keys</span></div>
-        <div><strong>Keys:</strong> <span id="keyCount">0</span>/4</div>
-        <div><strong>Hearts:</strong> <span id="hearts">❤️ ❤️ ❤️</span></div>
-        <div><strong>Danger:</strong> <span id="dangerText">Low</span></div>
-        <div><strong>Player:</strong> <span id="playerRoom">Playground</span></div>
-        <div><strong>Killer:</strong> <span id="killerRoom">Security</span></div>
-        <div><strong>Exit:</strong> <span id="exitState">Locked</span></div>
-        <div><strong>Best Time:</strong> <span id="bestTime">--</span></div>
-      </div>
-
-      <div class="danger-bar-wrap">
-        <div id="dangerBar" class="danger-bar"></div>
-      </div>
-    </section>
-
-    <section id="gameWrap" class="panel hidden">
-      <div class="map-board">
-        <img
-          src="assets/map.jpg"
-          alt="School map"
-          class="map-image"
-        />
-
-        <button class="room-marker electrical" data-room="Electrical" aria-label="Electrical"></button>
-        <button class="room-marker gym" data-room="Gym" aria-label="Gym"></button>
-        <button class="room-marker kitchen" data-room="Kitchen" aria-label="Kitchen"></button>
-        <button class="room-marker security" data-room="Security" aria-label="Security"></button>
-        <button class="room-marker playground" data-room="Playground" aria-label="Playground"></button>
-        <button class="room-marker exit-room" data-room="Exit" aria-label="Exit"></button>
-
-        <img
-          id="playerToken"
-          class="token player-token"
-          src="assets/player.png"
-          alt="Player"
-        />
-
-        <img
-          id="killerToken"
-          class="token killer-token"
-          src="assets/killer.png"
-          alt="Killer"
-        />
-      </div>
-    </section>
-
-    <section id="messageBox" class="panel hidden">
-      <p id="messageText">Press Start to begin.</p>
-    </section>
-
-    <section id="endScreen" class="panel screen end-screen hidden">
-      <div class="end-card">
-        <p id="endEyebrow" class="end-eyebrow">ROUND COMPLETE</p>
-        <h2 id="endTitle" class="end-title">You Escaped!</h2>
-        <p id="endText" class="end-text">You escaped the school.</p>
-
-        <div class="end-stats">
-          <div class="end-stat">
-            <span class="end-stat-label">Time</span>
-            <span id="endTime" class="end-stat-value">--</span>
-          </div>
-          <div class="end-stat">
-            <span class="end-stat-label">Hearts Left</span>
-            <span id="endHearts" class="end-stat-value">--</span>
-          </div>
-          <div class="end-stat">
-            <span class="end-stat-label">Keys</span>
-            <span id="endKeys" class="end-stat-value">--</span>
-          </div>
-          <div class="end-stat">
-            <span class="end-stat-label">Best Time</span>
-            <span id="endBestTime" class="end-stat-value">--</span>
-          </div>
-        </div>
-
-        <div class="end-buttons">
-          <button id="restartBtn" class="main-btn start-main-btn">Play Again</button>
-          <button id="nextLevelBtn" class="main-btn start-main-btn hidden">Next Level</button>
-        </div>
-      </div>
-    </section>
-
+      </section>
+    </main>
   </div>
 
   <script src="script.js"></script>
