@@ -7,58 +7,112 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="menu-app">
-    <section class="menu-card">
-      <p class="menu-eyebrow">SCHOOL PROJECT</p>
-      <h1 class="menu-title">Rabbit Escape</h1>
-      <p class="menu-tagline">
-        Escape scary places, collect keys, avoid the killer rabbit, and unlock the next level.
-      </p>
+  <div class="app">
 
-      <div class="menu-characters">
-        <div class="menu-character">
-          <img src="assets/player.png" alt="Player" class="menu-character-img hero-preview">
-          <p><strong>Player</strong><br>Main character</p>
+    <header class="topbar">
+      <h1>Rabbit Escape</h1>
+      <p class="subtitle">Level 1 · School Escape</p>
+    </header>
+
+    <section id="startScreen" class="panel screen">
+      <div class="start-card">
+        <p class="eyebrow">LEVEL 1</p>
+        <h2 class="game-title">School Escape</h2>
+        <p class="start-tagline">
+          Collect all 4 keys, avoid the killer rabbit, and escape through the Exit.
+        </p>
+
+        <div class="start-characters">
+          <div class="start-character">
+            <img src="assets/player.png" alt="Player" class="start-character-img hero-preview" />
+            <p><strong>You</strong><br />Find the keys</p>
+          </div>
+
+          <div class="start-character">
+            <img src="assets/killer.png" alt="Killer rabbit" class="start-character-img killer-preview" />
+            <p><strong>Killer Rabbit</strong><br />Do not get caught</p>
+          </div>
         </div>
-        <div class="menu-character">
-          <img src="assets/killer.png" alt="Killer rabbit" class="menu-character-img killer-preview">
-          <p><strong>Killer Rabbit</strong><br>Main enemy</p>
+
+        <div class="start-rules">
+          <div class="rule-pill">Click connected rooms to move</div>
+          <div class="rule-pill">4 random key rooms each round</div>
+          <div class="rule-pill">Get all keys to unlock Exit</div>
+          <div class="rule-pill">Caught 3 times = lose</div>
         </div>
-      </div>
 
-      <div class="menu-actions">
-        <button id="playBtn" class="menu-btn primary-btn">Play</button>
-        <button id="levelsBtn" class="menu-btn secondary-btn">Levels</button>
-        <button id="creditsBtn" class="menu-btn secondary-btn">Credits</button>
-      </div>
-    </section>
-
-    <section id="levelsPanel" class="info-card hidden">
-      <h2>Levels</h2>
-      <div class="level-list">
-        <button id="level1Btn" class="level-btn unlocked">
-          <span class="level-name">Level 1</span>
-          <span class="level-desc">School Escape</span>
-        </button>
-
-        <button id="level2Btn" class="level-btn locked">
-          <span class="level-name">Level 2</span>
-          <span class="level-desc" id="level2Text">Venezia Pizzeria</span>
-        </button>
-
-        <div class="level-btn locked static-level">
-          <span class="level-name">Level 3</span>
-          <span class="level-desc">Coming Soon</span>
-        </div>
+        <button id="startBtn" class="main-btn start-main-btn">Start Level 1</button>
       </div>
     </section>
 
-    <section id="creditsPanel" class="info-card hidden">
-      <h2>Credits</h2>
-      <p><strong>Made by Martin and Alan</strong></p>
-      <p>School project</p>
-      <p>Built with HTML, CSS, JavaScript, and GitHub Pages.</p>
+    <section id="hud" class="panel hidden">
+      <div class="hud-grid">
+        <div><strong>Goal:</strong> <span id="goalText">Find 4 keys</span></div>
+        <div><strong>Keys:</strong> <span id="keyCount">0</span>/4</div>
+        <div><strong>Hearts:</strong> <span id="hearts">❤️ ❤️ ❤️</span></div>
+        <div><strong>Danger:</strong> <span id="dangerText">Low</span></div>
+        <div><strong>Player:</strong> <span id="playerRoom">Playground</span></div>
+        <div><strong>Killer:</strong> <span id="killerRoom">Security</span></div>
+        <div><strong>Exit:</strong> <span id="exitState">Locked</span></div>
+        <div><strong>Best Time:</strong> <span id="bestTime">--</span></div>
+      </div>
+
+      <div class="danger-bar-wrap">
+        <div id="dangerBar" class="danger-bar"></div>
+      </div>
     </section>
+
+    <section id="gameWrap" class="panel hidden">
+      <div class="map-board">
+        <img src="assets/map.jpg" alt="School map" class="map-image" />
+
+        <button class="room-marker electrical" data-room="Electrical" aria-label="Electrical"></button>
+        <button class="room-marker gym" data-room="Gym" aria-label="Gym"></button>
+        <button class="room-marker kitchen" data-room="Kitchen" aria-label="Kitchen"></button>
+        <button class="room-marker security" data-room="Security" aria-label="Security"></button>
+        <button class="room-marker playground" data-room="Playground" aria-label="Playground"></button>
+        <button class="room-marker exit-room" data-room="Exit" aria-label="Exit"></button>
+
+        <img id="playerToken" class="token player-token" src="assets/player.png" alt="Player" />
+        <img id="killerToken" class="token killer-token" src="assets/killer.png" alt="Killer" />
+      </div>
+    </section>
+
+    <section id="messageBox" class="panel hidden">
+      <p id="messageText">Press Start to begin.</p>
+    </section>
+
+    <section id="endScreen" class="panel screen end-screen hidden">
+      <div class="end-card">
+        <p id="endEyebrow" class="end-eyebrow">ROUND COMPLETE</p>
+        <h2 id="endTitle" class="end-title">You Escaped!</h2>
+        <p id="endText" class="end-text">You escaped the school.</p>
+
+        <div class="end-stats">
+          <div class="end-stat">
+            <span class="end-stat-label">Time</span>
+            <span id="endTime" class="end-stat-value">--</span>
+          </div>
+          <div class="end-stat">
+            <span class="end-stat-label">Hearts Left</span>
+            <span id="endHearts" class="end-stat-value">--</span>
+          </div>
+          <div class="end-stat">
+            <span class="end-stat-label">Keys</span>
+            <span id="endKeys" class="end-stat-value">--</span>
+          </div>
+          <div class="end-stat">
+            <span class="end-stat-label">Best Time</span>
+            <span id="endBestTime" class="end-stat-value">--</span>
+          </div>
+        </div>
+
+        <div class="end-buttons">
+          <button id="restartBtn" class="main-btn start-main-btn">Play Again</button>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <script src="script.js"></script>
