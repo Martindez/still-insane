@@ -13,6 +13,8 @@ body {
   max-width: 1050px;
   margin: 0 auto;
   padding: 10px;
+  position: relative;
+  z-index: 2;
 }
 
 .topbar {
@@ -362,6 +364,36 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px;
+}
+
+/* RED FLASH OVERLAY */
+.flash-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 0, 0, 0.24);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.flash-overlay.active {
+  animation: flashHit 0.35s ease-out;
+}
+
+.flash-overlay.warning {
+  animation: flashWarning 0.28s ease-out;
+}
+
+@keyframes flashHit {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes flashWarning {
+  0% { opacity: 0; }
+  35% { opacity: 0.55; }
+  100% { opacity: 0; }
 }
 
 @media (max-width: 700px) {
