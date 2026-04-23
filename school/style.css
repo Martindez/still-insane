@@ -457,18 +457,12 @@ body {
   .end-stats {
     grid-template-columns: repeat(2, minmax(100px, 1fr));
   }
-}.hidden {
+  .hidden {
   display: none !important;
 }
 
+#jumpscareOverlay.hidden,
 .jumpscare-overlay.hidden {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-#jumpscareOverlay.hidden {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
