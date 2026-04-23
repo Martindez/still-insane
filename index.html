@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="flashOverlay" class="flash-overlay"></div>
+
   <div class="app">
 
     <header class="topbar">
@@ -24,12 +26,20 @@
 
         <div class="start-characters">
           <div class="start-character">
-            <img src="assets/player.png" alt="Player" class="start-character-img hero-preview" />
+            <img
+              src="assets/player.png"
+              alt="Player"
+              class="start-character-img hero-preview"
+            />
             <p><strong>You</strong><br />Find the keys</p>
           </div>
 
           <div class="start-character">
-            <img src="assets/killer.png" alt="Killer rabbit" class="start-character-img killer-preview" />
+            <img
+              src="assets/killer.png"
+              alt="Killer rabbit"
+              class="start-character-img killer-preview"
+            />
             <p><strong>Killer Rabbit</strong><br />Do not get caught</p>
           </div>
         </div>
@@ -64,7 +74,11 @@
 
     <section id="gameWrap" class="panel hidden">
       <div class="map-board">
-        <img src="assets/map.jpg" alt="School map" class="map-image" />
+        <img
+          src="assets/map.jpg"
+          alt="School map"
+          class="map-image"
+        />
 
         <button class="room-marker electrical" data-room="Electrical" aria-label="Electrical"></button>
         <button class="room-marker gym" data-room="Gym" aria-label="Gym"></button>
@@ -73,8 +87,19 @@
         <button class="room-marker playground" data-room="Playground" aria-label="Playground"></button>
         <button class="room-marker exit-room" data-room="Exit" aria-label="Exit"></button>
 
-        <img id="playerToken" class="token player-token" src="assets/player.png" alt="Player" />
-        <img id="killerToken" class="token killer-token" src="assets/killer.png" alt="Killer" />
+        <img
+          id="playerToken"
+          class="token player-token"
+          src="assets/player.png"
+          alt="Player"
+        />
+
+        <img
+          id="killerToken"
+          class="token killer-token"
+          src="assets/killer.png"
+          alt="Killer"
+        />
       </div>
     </section>
 
