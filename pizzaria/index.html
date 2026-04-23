@@ -1,2 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rabbit Escape - Pizzaria</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-hello pizzaria
+<div id="flashOverlay" class="flash-overlay"></div>
+
+<div class="app">
+
+<header class="topbar">
+<h1>Rabbit Escape</h1>
+<p class="subtitle">Level 2 · Venezia Pizzaria</p>
+</header>
+
+<section id="startScreen" class="panel screen">
+<div class="start-card">
+<p class="eyebrow">LEVEL 2</p>
+<h2 class="game-title">Venezia Pizzaria</h2>
+<p class="start-tagline">
+Collect all 5 keys and escape before the killer rabbit finds you.
+</p>
+
+<button id="startBtn" class="main-btn">Start Level 2</button>
+</div>
+</section>
+
+<section id="hud" class="panel hidden">
+<div class="hud-grid">
+<div><strong>Keys:</strong> <span id="keyCount">0</span>/5</div>
+<div><strong>Hearts:</strong> <span id="hearts">❤️ ❤️ ❤️</span></div>
+<div><strong>Danger:</strong> <span id="dangerText">Low</span></div>
+<div><strong>Player:</strong> <span id="playerRoom">Dining</span></div>
+<div><strong>Killer:</strong> <span id="killerRoom">Storage</span></div>
+<div><strong>Exit:</strong> <span id="exitState">Locked</span></div>
+</div>
+
+<div class="danger-bar-wrap">
+<div id="dangerBar" class="danger-bar"></div>
+</div>
+</section>
+
+<section id="gameWrap" class="panel hidden">
+<div class="map-board">
+
+<img src="assets/map.jpg" class="map-image">
+
+<button class="room kitchen" data-room="Kitchen"></button>
+<button class="room storage" data-room="Storage"></button>
+<button class="room staff" data-room="Staff"></button>
+<button class="room arcade" data-room="Arcade"></button>
+<button class="room dining" data-room="Dining"></button>
+<button class="room bath" data-room="Bath"></button>
+<button class="room delivery" data-room="Delivery"></button>
+<button class="room oven" data-room="Oven"></button>
+<button class="room exit-room" data-room="Exit"></button>
+
+<img id="playerToken" class="token player-token" src="../assets/player.png">
+<img id="killerToken" class="token killer-token" src="../assets/killer.png">
+
+</div>
+</section>
+
+<section id="messageBox" class="panel hidden">
+<p id="messageText">Press Start.</p>
+</section>
+
+<section id="endScreen" class="panel hidden screen">
+<h2 id="endTitle">You Escaped!</h2>
+<p id="endText"></p>
+<button onclick="location.reload()" class="main-btn">Play Again</button>
+</section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
