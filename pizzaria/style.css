@@ -46,7 +46,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .main-btn {
@@ -106,92 +106,157 @@ body {
   display: block;
 }
 
-.room {
+/* HOTSPOTS */
+.room-hotspot {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 18px;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  z-index: 3;
+  z-index: 5;
+  border-radius: 999px;
+}
+
+.room-hotspot.kitchen { top: 12%; left: 16%; width: 105px; height: 50px; }
+.room-hotspot.storage { top: 12%; left: 50%; width: 120px; height: 50px; }
+.room-hotspot.staff { top: 12%; left: 84%; width: 110px; height: 50px; }
+
+.room-hotspot.arcade { top: 45%; left: 16%; width: 110px; height: 54px; }
+.room-hotspot.dining { top: 45%; left: 50%; width: 130px; height: 56px; }
+.room-hotspot.bath { top: 45%; left: 84%; width: 110px; height: 54px; }
+
+.room-hotspot.delivery { top: 82%; left: 16%; width: 115px; height: 52px; }
+.room-hotspot.oven { top: 82%; left: 50%; width: 120px; height: 52px; }
+.room-hotspot.exit-room { top: 82%; left: 84%; width: 82px; height: 52px; }
+
+.room-hotspot.locked {
+  pointer-events: none;
+}
+
+/* ROOM RINGS */
+.room-ring {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
   transition: 0.18s ease;
 }
 
-.room:hover {
-  background: rgba(255, 255, 255, 0.08);
+.kitchen-ring { top: 12%; left: 16%; width: 118px; height: 56px; }
+.storage-ring { top: 12%; left: 50%; width: 132px; height: 56px; }
+.staff-ring { top: 12%; left: 84%; width: 120px; height: 56px; }
+
+.arcade-ring { top: 45%; left: 16%; width: 122px; height: 60px; }
+.dining-ring { top: 45%; left: 50%; width: 144px; height: 62px; }
+.bath-ring { top: 45%; left: 84%; width: 122px; height: 60px; }
+
+.delivery-ring { top: 82%; left: 16%; width: 126px; height: 58px; }
+.oven-ring { top: 82%; left: 50%; width: 132px; height: 58px; }
+.exit-ring { top: 82%; left: 84%; width: 92px; height: 58px; }
+
+.room-ring.connected {
+  opacity: 1;
+  border: 2px solid rgba(80, 220, 120, 0.85);
+  box-shadow: 0 0 18px rgba(80, 220, 120, 0.22);
+  background: rgba(80, 220, 120, 0.06);
 }
 
-.room.connected {
-  border-color: rgba(80, 220, 120, 0.9);
-  background: rgba(80, 220, 120, 0.16);
+.room-ring.current {
+  opacity: 1;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.room-ring.killer-room {
+  opacity: 1;
+  border: 2px solid rgba(255, 0, 0, 0.95);
+  box-shadow: 0 0 24px rgba(255, 0, 0, 0.25);
+  background: rgba(255, 0, 0, 0.08);
+}
+
+.room-ring.exit-open {
+  opacity: 1;
+  border: 2px solid #4cff72;
+  box-shadow: 0 0 24px rgba(76, 255, 114, 0.26);
+  background: rgba(76, 255, 114, 0.10);
+}
+
+.room-ring.safe-turn {
+  opacity: 1;
+  border: 2px solid rgba(80, 180, 255, 0.9);
+  box-shadow: 0 0 22px rgba(80, 180, 255, 0.24);
+  background: rgba(80, 180, 255, 0.08);
+}
+
+/* KEY LAYER */
+.key-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.map-key {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, #fff6b0 0%, #ffd54a 35%, #d69b00 70%, #8a5a00 100%);
   box-shadow:
-    0 0 0 2px rgba(80, 220, 120, 0.14),
-    0 0 18px rgba(80, 220, 120, 0.18);
+    0 0 6px rgba(255, 210, 60, 0.95),
+    0 0 12px rgba(255, 210, 60, 0.65),
+    0 0 20px rgba(255, 210, 60, 0.28);
+  animation: keyFloat 1.4s ease-in-out infinite alternate;
 }
 
-.room.locked {
-  opacity: 0.18;
+.map-key::before {
+  content: "";
+  position: absolute;
+  right: -7px;
+  top: 5px;
+  width: 10px;
+  height: 4px;
+  border-radius: 3px;
+  background: #d9a300;
+  box-shadow: 0 0 6px rgba(255, 210, 60, 0.45);
 }
 
-.room.current {
-  border-color: white;
+.map-key::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 3px;
+  width: 3px;
+  height: 3px;
+  background: #f7d65c;
   box-shadow:
-    0 0 0 3px rgba(255, 255, 255, 0.20),
-    0 0 18px rgba(255, 255, 255, 0.08);
+    0 5px 0 #f7d65c,
+    0 10px 0 #f7d65c;
 }
 
-.room.killer-room {
-  border-color: rgba(255, 0, 0, 0.95);
-  box-shadow:
-    0 0 0 3px rgba(255, 0, 0, 0.16),
-    0 0 20px rgba(180, 0, 0, 0.22);
+@keyframes keyFloat {
+  from {
+    transform: translate(-50%, -50%) translateY(0px) scale(1);
+    opacity: 0.92;
+  }
+  to {
+    transform: translate(-50%, -50%) translateY(-4px) scale(1.04);
+    opacity: 1;
+  }
 }
 
-.room.key-room {
-  border-color: rgba(255, 208, 0, 0.9);
-  box-shadow:
-    0 0 0 2px rgba(255, 208, 0, 0.22),
-    0 0 18px rgba(255, 208, 0, 0.16);
-  animation: keyPulse 1s infinite alternate;
-}
-
-.room.exit-open {
-  border-color: #4cff72;
-  box-shadow:
-    0 0 0 3px rgba(76, 255, 114, 0.2),
-    0 0 24px rgba(76, 255, 114, 0.25);
-  background: rgba(76, 255, 114, 0.12);
-}
-
-.room.room-cleared {
-  opacity: 0.12;
-}
-
-.room.safe-turn {
-  outline: 3px solid rgba(80, 180, 255, 0.55);
-}
-
-.kitchen { top: 12%; left: 16%; width: 160px; height: 70px; }
-.storage { top: 12%; left: 50%; width: 180px; height: 70px; }
-.staff { top: 12%; left: 84%; width: 165px; height: 70px; }
-
-.arcade { top: 45%; left: 16%; width: 170px; height: 78px; }
-.dining { top: 45%; left: 50%; width: 210px; height: 82px; }
-.bath { top: 45%; left: 84%; width: 165px; height: 78px; }
-
-.delivery { top: 82%; left: 16%; width: 185px; height: 72px; }
-.oven { top: 82%; left: 50%; width: 195px; height: 72px; }
-.exit-room { top: 82%; left: 84%; width: 135px; height: 72px; }
-
+/* TOKENS */
 .token {
   position: absolute;
   transform: translate(-50%, -50%);
-  z-index: 4;
+  z-index: 6;
   pointer-events: none;
-  transition:
-    top 0.22s ease,
-    left 0.22s ease,
-    transform 0.2s ease;
+  transition: top 0.22s ease, left 0.22s ease, transform 0.2s ease;
 }
 
 .player-token {
@@ -226,19 +291,6 @@ body {
 @keyframes killerPulse {
   from { transform: translate(-50%, -50%) scale(1); }
   to { transform: translate(-50%, -50%) scale(1.14); }
-}
-
-@keyframes keyPulse {
-  from {
-    box-shadow:
-      0 0 0 2px rgba(255, 208, 0, 0.16),
-      0 0 10px rgba(255, 208, 0, 0.12);
-  }
-  to {
-    box-shadow:
-      0 0 0 2px rgba(255, 208, 0, 0.28),
-      0 0 20px rgba(255, 208, 0, 0.22);
-  }
 }
 
 #messageText {
@@ -326,8 +378,7 @@ body {
   gap: 10px;
 }
 
-/* SAFE JUMPSCARE + FLASH BLOCK */
-
+/* FLASH */
 .flash-overlay {
   position: fixed;
   inset: 0;
@@ -345,6 +396,19 @@ body {
   animation: flashWarning 0.25s ease-out;
 }
 
+@keyframes flashHit {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes flashWarning {
+  0% { opacity: 0; }
+  35% { opacity: 0.55; }
+  100% { opacity: 0; }
+}
+
+/* JUMPSCARE */
 .jumpscare-overlay {
   position: fixed;
   inset: 0;
@@ -355,8 +419,12 @@ body {
   overflow: hidden;
 }
 
+#jumpscareOverlay.hidden,
 .jumpscare-overlay.hidden {
-  display: none;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .jumpscare-bg {
@@ -398,18 +466,6 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 
-@keyframes flashHit {
-  0% { opacity: 0; }
-  20% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-@keyframes flashWarning {
-  0% { opacity: 0; }
-  35% { opacity: 0.55; }
-  100% { opacity: 0; }
-}
-
 .shake {
   animation: screenShake 0.25s linear;
 }
@@ -437,6 +493,11 @@ body {
   .killer-token {
     width: 78px;
     height: 78px;
+  }
+
+  .map-key {
+    width: 14px;
+    height: 14px;
   }
 
   .end-stats {

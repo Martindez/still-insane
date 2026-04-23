@@ -9,14 +9,17 @@
 <body>
   <div id="flashOverlay" class="flash-overlay"></div>
 
-  <div id="jumpscareOverlay" class="jumpscare-overlay hidden">
+  <div id="jumpscareOverlay" class="jumpscare-overlay hidden" aria-hidden="true">
     <div class="jumpscare-bg"></div>
-    <img src="../assets/killer.png" alt="Killer Rabbit" class="jumpscare-killer" />
+    <img
+      src="../assets/killer.png"
+      alt="Killer Rabbit"
+      class="jumpscare-killer"
+    />
     <div class="jumpscare-text">CAUGHT!</div>
   </div>
 
   <div class="app">
-
     <header class="topbar">
       <h1>Rabbit Escape</h1>
       <p class="subtitle">Level 2 · Venezia Pizzaria</p>
@@ -25,19 +28,22 @@
     <section id="startScreen" class="panel screen">
       <div class="start-card">
         <p class="eyebrow">LEVEL 2</p>
-        <h2 class="game-title">Venezia Pizzaria</h2>
+        <h2 class="game-title">Venezia Pizzaria V2</h2>
         <p class="start-tagline">
-          Collect all 5 keys, avoid the killer rabbit, and escape through the Exit.
+          Search the pizzaria, collect all 5 glowing keys, avoid the killer rabbit,
+          and escape through the Exit.
         </p>
 
         <div class="start-rules">
-          <div class="rule-pill">Click glowing rooms to move</div>
-          <div class="rule-pill">Only connected rooms work</div>
+          <div class="rule-pill">Click connected rooms to move</div>
+          <div class="rule-pill">Look for glowing keys on the map</div>
           <div class="rule-pill">Collect 5 keys to unlock Exit</div>
           <div class="rule-pill">Caught 3 times = lose</div>
         </div>
 
-        <button id="startBtn" class="main-btn start-main-btn">Start Level 2</button>
+        <button id="startBtn" class="main-btn start-main-btn" type="button">
+          Start Level 2
+        </button>
       </div>
     </section>
 
@@ -53,27 +59,57 @@
         <div><strong>Best Time:</strong> <span id="bestTime">--</span></div>
       </div>
 
-      <div class="danger-bar-wrap">
+      <div class="danger-bar-wrap" aria-label="Danger meter">
         <div id="dangerBar" class="danger-bar"></div>
       </div>
     </section>
 
     <section id="gameWrap" class="panel hidden">
       <div class="map-board">
-        <img src="assets/map.jpg" alt="Pizzaria map" class="map-image" />
+        <img
+          src="./assets/map.jpg"
+          alt="Pizzaria map"
+          class="map-image"
+        />
 
-        <button class="room kitchen" data-room="Kitchen" aria-label="Kitchen"></button>
-        <button class="room storage" data-room="Storage" aria-label="Storage Room"></button>
-        <button class="room staff" data-room="Staff" aria-label="Staff Room"></button>
-        <button class="room arcade" data-room="Arcade" aria-label="Arcade"></button>
-        <button class="room dining" data-room="Dining" aria-label="Dining Area"></button>
-        <button class="room bath" data-room="Bath" aria-label="Bathrooms"></button>
-        <button class="room delivery" data-room="Delivery" aria-label="Delivery Entrance"></button>
-        <button class="room oven" data-room="Oven" aria-label="Pizza Oven Area"></button>
-        <button class="room exit-room" data-room="Exit" aria-label="Exit"></button>
+        <!-- clickable hotspots -->
+        <button class="room-hotspot kitchen" data-room="Kitchen" aria-label="Kitchen" type="button"></button>
+        <button class="room-hotspot storage" data-room="Storage" aria-label="Storage" type="button"></button>
+        <button class="room-hotspot staff" data-room="Staff" aria-label="Staff" type="button"></button>
+        <button class="room-hotspot arcade" data-room="Arcade" aria-label="Arcade" type="button"></button>
+        <button class="room-hotspot dining" data-room="Dining" aria-label="Dining" type="button"></button>
+        <button class="room-hotspot bath" data-room="Bath" aria-label="Bathrooms" type="button"></button>
+        <button class="room-hotspot delivery" data-room="Delivery" aria-label="Delivery" type="button"></button>
+        <button class="room-hotspot oven" data-room="Oven" aria-label="Oven" type="button"></button>
+        <button class="room-hotspot exit-room" data-room="Exit" aria-label="Exit" type="button"></button>
 
-        <img id="playerToken" class="token player-token" src="../assets/player.png" alt="Player" />
-        <img id="killerToken" class="token killer-token" src="../assets/killer.png" alt="Killer" />
+        <!-- visual room rings -->
+        <div class="room-ring kitchen-ring" data-ring="Kitchen"></div>
+        <div class="room-ring storage-ring" data-ring="Storage"></div>
+        <div class="room-ring staff-ring" data-ring="Staff"></div>
+        <div class="room-ring arcade-ring" data-ring="Arcade"></div>
+        <div class="room-ring dining-ring" data-ring="Dining"></div>
+        <div class="room-ring bath-ring" data-ring="Bath"></div>
+        <div class="room-ring delivery-ring" data-ring="Delivery"></div>
+        <div class="room-ring oven-ring" data-ring="Oven"></div>
+        <div class="room-ring exit-ring" data-ring="Exit"></div>
+
+        <!-- visible key icons -->
+        <div id="keyLayer" class="key-layer" aria-hidden="true"></div>
+
+        <img
+          id="playerToken"
+          class="token player-token"
+          src="../assets/player.png"
+          alt="Player"
+        />
+
+        <img
+          id="killerToken"
+          class="token killer-token"
+          src="../assets/killer.png"
+          alt="Killer"
+        />
       </div>
     </section>
 
@@ -107,11 +143,12 @@
         </div>
 
         <div class="end-buttons">
-          <button id="restartBtn" class="main-btn start-main-btn">Play Again</button>
+          <button id="restartBtn" class="main-btn start-main-btn" type="button">
+            Play Again
+          </button>
         </div>
       </div>
     </section>
-
   </div>
 
   <script src="script.js"></script>

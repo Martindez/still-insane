@@ -10,76 +10,168 @@ const rooms = {
   Exit: ["Bath", "Oven"]
 };
 
-const allRooms = ["Kitchen", "Storage", "Staff", "Arcade", "Dining", "Bath", "Delivery", "Oven"];
-const totalKeys = 5;
+const possibleKeyRooms = [
+  "Kitchen",
+  "Storage",
+  "Staff",
+  "Arcade",
+  "Dining",
+  "Bath",
+  "Delivery",
+  "Oven"
+];
 
-const pos = {
-  Kitchen: [12, 16],
-  Storage: [12, 50],
-  Staff: [12, 84],
-  Arcade: [45, 16],
-  Dining: [45, 50],
-  Bath: [45, 84],
-  Delivery: [82, 16],
-  Oven: [82, 50],
-  Exit: [82, 84]
+const totalKeys = 5;
+const bestTimeStorageKey = "rabbitEscapePizzariaBestTime";
+
+const roomPositions = {
+  Kitchen: { top: 12, left: 16 },
+  Storage: { top: 12, left: 50 },
+  Staff: { top: 12, left: 84 },
+  Arcade: { top: 45, left: 16 },
+  Dining: { top: 45, left: 50 },
+  Bath: { top: 45, left: 84 },
+  Delivery: { top: 82, left: 16 },
+  Oven: { top: 82, left: 50 },
+  Exit: { top: 82, left: 84 }
 };
 
-let player = "Dining";
-let killer = "Storage";
-let hearts = 3;
-let keys = [];
-let got = [];
-let gameStarted = false;
-let startTime = 0;
+const roomKeySpawnAreas = {
+  Kitchen: [
+    { top: 10, left: 12 },
+    { top: 12, left: 18 },
+    { top: 14, left: 15 },
+    { top: 13, left: 20 },
+    { top: 11, left: 16 }
+  ],
+  Storage: [
+    { top: 10, left: 46 },
+    { top: 12, left: 53 },
+    { top: 14, left: 49 },
+    { top: 13, left: 56 },
+    { top: 11, left: 50 }
+  ],
+  Staff: [
+    { top: 10, left: 80 },
+    { top: 12, left: 86 },
+    { top: 14, left: 83 },
+    { top: 13, left: 88 },
+    { top: 11, left: 84 }
+  ],
+  Arcade: [
+    { top: 42, left: 12 },
+    { top: 45, left: 18 },
+    { top: 48, left: 15 },
+    { top: 46, left: 20 },
+    { top: 44, left: 16 }
+  ],
+  Dining: [
+    { top: 42, left: 45 },
+    { top: 45, left: 54 },
+    { top: 48, left: 49 },
+    { top: 46, left: 57 },
+    { top: 44, left: 50 }
+  ],
+  Bath: [
+    { top: 42, left: 80 },
+    { top: 45, left: 87 },
+    { top: 48, left: 83 },
+    { top: 46, left: 89 },
+    { top: 44, left: 84 }
+  ],
+  Delivery: [
+    { top: 79, left: 12 },
+    { top: 82, left: 18 },
+    { top: 85, left: 15 },
+    { top: 83, left: 21 },
+    { top: 81, left: 16 }
+  ],
+  Oven: [
+    { top: 79, left: 46 },
+    { top: 82, left: 53 },
+    { top: 85, left: 49 },
+    { top: 83, left: 56 },
+    { top: 81, left: 50 }
+  ]
+};
+
+let gameState = {
+  playerRoom: "Dining",
+  killerRoom: "Storage",
+  keyRooms: [],
+  keyVisualPositions: {},
+  collectedKeys: [],
+  hearts: 3,
+  maxHearts: 3,
+  gameStarted: false,
+  startTime: 0,
+  lastWarningTime: 0,
+  safeTurns: 0
+};
+
 let audioContext = null;
-let lastWarningTime = 0;
-let safeTurns = 0;
 
-const startBtn = document.getElementById("startBtn");
-const restartBtn = document.getElementById("restartBtn");
-const startScreen = document.getElementById("startScreen");
-const hud = document.getElementById("hud");
-const gameWrap = document.getElementById("gameWrap");
-const messageBox = document.getElementById("messageBox");
-const endScreen = document.getElementById("endScreen");
+const ui = {
+  startScreen: document.getElementById("startScreen"),
+  hud: document.getElementById("hud"),
+  gameWrap: document.getElementById("gameWrap"),
+  messageBox: document.getElementById("messageBox"),
+  endScreen: document.getElementById("endScreen"),
 
-const playerToken = document.getElementById("playerToken");
-const killerToken = document.getElementById("killerToken");
+  endTitle: document.getElementById("endTitle"),
+  endText: document.getElementById("endText"),
+  endTime: document.getElementById("endTime"),
+  endHearts: document.getElementById("endHearts"),
+  endKeys: document.getElementById("endKeys"),
+  endBestTime: document.getElementById("endBestTime"),
+  endEyebrow: document.getElementById("endEyebrow"),
 
-const keyCount = document.getElementById("keyCount");
-const heartsText = document.getElementById("hearts");
-const playerRoom = document.getElementById("playerRoom");
-const killerRoom = document.getElementById("killerRoom");
-const exitState = document.getElementById("exitState");
-const dangerText = document.getElementById("dangerText");
-const dangerBar = document.getElementById("dangerBar");
-const messageText = document.getElementById("messageText");
-const goalText = document.getElementById("goalText");
-const bestTimeText = document.getElementById("bestTime");
-const flashOverlay = document.getElementById("flashOverlay");
-const jumpscareOverlay = document.getElementById("jumpscareOverlay");
+  goalText: document.getElementById("goalText"),
+  exitStateText: document.getElementById("exitState"),
+  keyCountText: document.getElementById("keyCount"),
+  heartsText: document.getElementById("hearts"),
+  dangerText: document.getElementById("dangerText"),
+  playerRoomText: document.getElementById("playerRoom"),
+  killerRoomText: document.getElementById("killerRoom"),
+  bestTimeText: document.getElementById("bestTime"),
+  dangerBar: document.getElementById("dangerBar"),
+  messageText: document.getElementById("messageText"),
 
-const endEyebrow = document.getElementById("endEyebrow");
-const endTitle = document.getElementById("endTitle");
-const endText = document.getElementById("endText");
-const endTime = document.getElementById("endTime");
-const endHearts = document.getElementById("endHearts");
-const endKeys = document.getElementById("endKeys");
-const endBestTime = document.getElementById("endBestTime");
+  playerToken: document.getElementById("playerToken"),
+  killerToken: document.getElementById("killerToken"),
+  flashOverlay: document.getElementById("flashOverlay"),
+  jumpscareOverlay: document.getElementById("jumpscareOverlay"),
+  keyLayer: document.getElementById("keyLayer"),
 
-document.querySelectorAll(".room").forEach((btn) => {
-  btn.addEventListener("click", () => move(btn.dataset.room));
+  startBtn: document.getElementById("startBtn"),
+  restartBtn: document.getElementById("restartBtn"),
+  roomButtons: document.querySelectorAll(".room-hotspot"),
+  roomRings: document.querySelectorAll(".room-ring")
+};
+
+ui.startBtn.addEventListener("click", startGame);
+ui.restartBtn.addEventListener("click", resetGame);
+
+ui.roomButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!gameState.gameStarted) return;
+    movePlayer(button.dataset.room);
+  });
 });
 
-startBtn.addEventListener("click", startGame);
-restartBtn.addEventListener("click", resetGame);
+document.addEventListener("DOMContentLoaded", () => {
+  hardHideJumpscare();
+  updateUI();
+});
 
 function initAudio() {
   if (!audioContext) {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (AudioCtx) audioContext = new AudioCtx();
+    if (AudioCtx) {
+      audioContext = new AudioCtx();
+    }
   }
+
   if (audioContext && audioContext.state === "suspended") {
     audioContext.resume();
   }
@@ -88,22 +180,22 @@ function initAudio() {
 function playTone(frequency, duration, type = "sine", volume = 0.05, fade = 0.02) {
   if (!audioContext) return;
 
-  const osc = audioContext.createOscillator();
-  const gain = audioContext.createGain();
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
   const now = audioContext.currentTime;
 
-  osc.type = type;
-  osc.frequency.setValueAtTime(frequency, now);
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, now);
 
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(volume, now + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  gainNode.gain.setValueAtTime(0.0001, now);
+  gainNode.gain.exponentialRampToValueAtTime(volume, now + 0.01);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
-  osc.connect(gain);
-  gain.connect(audioContext.destination);
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
 
-  osc.start(now);
-  osc.stop(now + duration + fade);
+  oscillator.start(now);
+  oscillator.stop(now + duration + fade);
 }
 
 function playMoveSound() {
@@ -135,11 +227,12 @@ function playLockedSound() {
   playTone(150, 0.12, "square", 0.04);
 }
 
-function flash(type = "warning") {
-  if (!flashOverlay) return;
-  flashOverlay.classList.remove("active", "warning");
-  void flashOverlay.offsetWidth;
-  flashOverlay.classList.add(type);
+function flashScreen(type = "warning") {
+  if (!ui.flashOverlay) return;
+
+  ui.flashOverlay.classList.remove("active", "warning");
+  void ui.flashOverlay.offsetWidth;
+  ui.flashOverlay.classList.add(type);
 }
 
 function shakeScreen() {
@@ -148,137 +241,199 @@ function shakeScreen() {
   document.body.classList.add("shake");
 }
 
-function showJumpscare(duration = 650) {
-  if (!jumpscareOverlay) return Promise.resolve();
+function hardHideJumpscare() {
+  if (!ui.jumpscareOverlay) return;
 
-  jumpscareOverlay.classList.remove("hidden");
+  ui.jumpscareOverlay.classList.add("hidden");
+  ui.jumpscareOverlay.style.display = "none";
+  ui.jumpscareOverlay.style.visibility = "hidden";
+  ui.jumpscareOverlay.style.pointerEvents = "none";
+  ui.jumpscareOverlay.setAttribute("aria-hidden", "true");
+}
+
+function showJumpscareOverlay() {
+  if (!ui.jumpscareOverlay) return;
+
+  ui.jumpscareOverlay.classList.remove("hidden");
+  ui.jumpscareOverlay.style.display = "flex";
+  ui.jumpscareOverlay.style.visibility = "visible";
+  ui.jumpscareOverlay.style.pointerEvents = "auto";
+  ui.jumpscareOverlay.setAttribute("aria-hidden", "false");
+}
+
+function showJumpscare(duration = 650) {
+  if (!ui.jumpscareOverlay) return Promise.resolve();
+
+  showJumpscareOverlay();
   shakeScreen();
 
   return new Promise((resolve) => {
     setTimeout(() => {
-      jumpscareOverlay.classList.add("hidden");
+      hardHideJumpscare();
       resolve();
     }, duration);
   });
 }
 
-function shuffle(arr) {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
+function shuffle(array) {
+  const copy = [...array];
+
+  for (let i = copy.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
+
   return copy;
 }
 
-function assignKeys() {
-  keys = shuffle(allRooms).slice(0, totalKeys);
-  got = [];
+function getBestTime() {
+  return localStorage.getItem(bestTimeStorageKey);
+}
+
+function setBestTime(seconds) {
+  const currentBest = getBestTime();
+  if (!currentBest || seconds < Number(currentBest)) {
+    localStorage.setItem(bestTimeStorageKey, String(seconds));
+  }
+}
+
+function assignRandomKeys() {
+  gameState.keyRooms = shuffle(possibleKeyRooms).slice(0, totalKeys);
+  gameState.keyVisualPositions = {};
+
+  gameState.keyRooms.forEach((room) => {
+    const spawnOptions = shuffle(roomKeySpawnAreas[room]);
+    gameState.keyVisualPositions[room] = spawnOptions[0];
+  });
+}
+
+function resetRoundState() {
+  gameState.playerRoom = "Dining";
+  gameState.killerRoom = "Storage";
+  gameState.collectedKeys = [];
+  gameState.hearts = gameState.maxHearts;
+  gameState.safeTurns = 0;
+  gameState.startTime = 0;
+  gameState.lastWarningTime = 0;
 }
 
 function startGame() {
   initAudio();
-  assignKeys();
-  player = "Dining";
-  killer = "Storage";
-  hearts = 3;
-  safeTurns = 0;
-  gameStarted = true;
-  startTime = Date.now();
-  lastWarningTime = 0;
+  hardHideJumpscare();
+  assignRandomKeys();
+  resetRoundState();
 
-  startScreen.classList.add("hidden");
-  hud.classList.remove("hidden");
-  gameWrap.classList.remove("hidden");
-  messageBox.classList.remove("hidden");
-  endScreen.classList.add("hidden");
+  gameState.gameStarted = true;
+  gameState.startTime = Date.now();
 
-  msg("Goal: Collect all 5 keys, then reach the Exit.");
-  update();
+  ui.startScreen.classList.add("hidden");
+  ui.hud.classList.remove("hidden");
+  ui.gameWrap.classList.remove("hidden");
+  ui.messageBox.classList.remove("hidden");
+  ui.endScreen.classList.add("hidden");
+
+  showMessage("Goal: Collect all 5 glowing keys, then reach the Exit.");
+  updateUI();
 }
 
 function resetGame() {
-  player = "Dining";
-  killer = "Storage";
-  hearts = 3;
-  safeTurns = 0;
-  keys = [];
-  got = [];
-  gameStarted = false;
-  startTime = 0;
-  lastWarningTime = 0;
+  hardHideJumpscare();
 
-  startScreen.classList.remove("hidden");
-  hud.classList.add("hidden");
-  gameWrap.classList.add("hidden");
-  messageBox.classList.add("hidden");
-  endScreen.classList.add("hidden");
+  gameState.gameStarted = false;
+  gameState.keyRooms = [];
+  gameState.keyVisualPositions = {};
+  resetRoundState();
 
-  msg("Press Start to begin.");
-  update();
+  ui.startScreen.classList.remove("hidden");
+  ui.hud.classList.add("hidden");
+  ui.gameWrap.classList.add("hidden");
+  ui.messageBox.classList.add("hidden");
+  ui.endScreen.classList.add("hidden");
+
+  renderKeys();
+  showMessage("Press Start to begin.");
+  updateUI();
 }
 
-function move(room) {
-  if (!gameStarted) return;
-  if (!rooms[player].includes(room)) return;
+function movePlayer(targetRoom) {
+  if (!rooms[gameState.playerRoom].includes(targetRoom)) {
+    showMessage("You can only move to connected glowing rooms.");
+    return;
+  }
 
-  player = room;
+  gameState.playerRoom = targetRoom;
   playMoveSound();
 
-  if (safeTurns > 0) {
-    safeTurns -= 1;
+  if (gameState.safeTurns > 0) {
+    gameState.safeTurns -= 1;
   }
 
-  if (keys.includes(player) && !got.includes(player)) {
-    got.push(player);
-    playKeySound();
+  checkForKeyPickup();
 
-    if (got.length === totalKeys) {
-      msg("All 5 keys collected! The Exit is OPEN!");
-    } else {
-      const left = totalKeys - got.length;
-      msg(`You found a key in ${player}. ${left} key${left === 1 ? "" : "s"} left.`);
-    }
-  } else if (player === "Exit" && got.length < totalKeys) {
-    msg("The Exit is locked. Collect all 5 keys first.");
+  if (gameState.playerRoom === "Exit" && !exitIsOpen()) {
+    showMessage("The Exit is locked. Collect all 5 keys first.");
     playLockedSound();
-  } else {
-    msg(`You moved to ${player}.`);
+  } else if (
+    !gameState.collectedKeys.includes(gameState.playerRoom) ||
+    !gameState.keyRooms.includes(gameState.playerRoom)
+  ) {
+    if (!(gameState.playerRoom === "Exit" && exitIsOpen())) {
+      showMessage(`You moved to ${gameState.playerRoom}.`);
+    }
   }
 
-  if (safeTurns === 0 && player === killer) {
-    hit();
+  if (gameState.safeTurns === 0 && gameState.playerRoom === gameState.killerRoom) {
+    playerHit();
     return;
   }
 
   moveKiller();
 
-  if (safeTurns === 0 && player === killer) {
-    hit();
+  if (gameState.safeTurns === 0 && gameState.playerRoom === gameState.killerRoom) {
+    playerHit();
     return;
   }
 
-  if (player === "Exit" && got.length === totalKeys) {
-    win();
+  if (gameState.playerRoom === "Exit" && exitIsOpen()) {
+    winGame();
     return;
   }
 
-  maybeWarn();
-  update();
+  maybeShowDangerWarning();
+  updateUI();
+}
+
+function checkForKeyPickup() {
+  const currentRoom = gameState.playerRoom;
+
+  if (
+    gameState.keyRooms.includes(currentRoom) &&
+    !gameState.collectedKeys.includes(currentRoom)
+  ) {
+    gameState.collectedKeys.push(currentRoom);
+    playKeySound();
+
+    if (gameState.collectedKeys.length === gameState.keyRooms.length) {
+      showMessage("All 5 keys collected! The Exit is OPEN!");
+    } else {
+      const keysLeft = gameState.keyRooms.length - gameState.collectedKeys.length;
+      showMessage(`You found a key in ${currentRoom}. ${keysLeft} key${keysLeft === 1 ? "" : "s"} left.`);
+    }
+  }
 }
 
 function moveKiller() {
-  if (safeTurns > 0 && Math.random() < 0.55) {
+  if (gameState.safeTurns > 0 && Math.random() < 0.55) {
     return;
   }
 
-  const nextStep = shortestPath(killer, player);
+  const path = shortestPath(gameState.killerRoom, gameState.playerRoom);
 
-  if (nextStep.length > 1 && Math.random() < 0.9) {
-    killer = nextStep[1];
+  if (path.length > 1 && Math.random() < 0.85) {
+    gameState.killerRoom = path[1];
   } else {
-    const next = rooms[killer];
-    killer = next[Math.floor(Math.random() * next.length)];
+    const choices = rooms[gameState.killerRoom];
+    gameState.killerRoom = choices[Math.floor(Math.random() * choices.length)];
   }
 }
 
@@ -303,188 +458,235 @@ function shortestPath(start, goal) {
   return [start];
 }
 
-function dist(a, b) {
+function getDistance(a, b) {
   return Math.max(0, shortestPath(a, b).length - 1);
 }
 
-function maybeWarn() {
-  if (safeTurns > 0) return;
-
-  const d = dist(player, killer);
-  const now = Date.now();
-
-  if (d === 1 && now - lastWarningTime > 1200) {
-    msg("Warning: The killer is very close!");
-    playWarningSound();
-    flash("warning");
-    lastWarningTime = now;
-  } else if (got.length === totalKeys && player !== "Exit") {
-    msg("All keys collected! Run to the Exit!");
-  }
+function exitIsOpen() {
+  return gameState.collectedKeys.length === gameState.keyRooms.length && gameState.keyRooms.length > 0;
 }
 
-async function hit() {
-  hearts--;
+async function playerHit() {
+  if (!gameState.gameStarted) return;
+
+  gameState.hearts -= 1;
   playHitSound();
-  flash("active");
+  flashScreen("active");
   await showJumpscare();
 
-  if (hearts <= 0) {
-    lose();
+  if (gameState.hearts <= 0) {
+    loseGame();
     return;
   }
 
-  player = "Dining";
-  safeTurns = 1;
-  msg(`Caught! You lost 1 heart. ${hearts} heart${hearts === 1 ? "" : "s"} left. Safe for 1 move.`);
-  update();
+  gameState.playerRoom = "Dining";
+  gameState.safeTurns = 1;
+
+  showMessage(
+    `Caught! You lost 1 heart. ${gameState.hearts} heart${gameState.hearts === 1 ? "" : "s"} left. Safe for 1 move.`
+  );
+  updateUI();
 }
 
-function win() {
-  gameStarted = false;
-  hud.classList.add("hidden");
-  gameWrap.classList.add("hidden");
-  messageBox.classList.add("hidden");
-  endScreen.classList.remove("hidden");
+function loseGame() {
+  hardHideJumpscare();
+  gameState.gameStarted = false;
 
-  const seconds = Math.floor((Date.now() - startTime) / 1000);
-  const bestKey = "rabbitEscapePizzariaBestTime";
-  const best = localStorage.getItem(bestKey);
+  ui.hud.classList.add("hidden");
+  ui.gameWrap.classList.add("hidden");
+  ui.messageBox.classList.add("hidden");
+  ui.endScreen.classList.remove("hidden");
 
-  if (!best || seconds < Number(best)) {
-    localStorage.setItem(bestKey, String(seconds));
-  }
+  ui.endEyebrow.textContent = "GAME OVER";
+  ui.endTitle.textContent = "You Were Caught!";
+  ui.endText.textContent = "The killer rabbit got you in the pizzaria.";
+  ui.endTime.textContent = "--";
+  ui.endHearts.textContent = "0";
+  ui.endKeys.textContent = `${gameState.collectedKeys.length}/${totalKeys}`;
 
+  const best = getBestTime();
+  ui.endBestTime.textContent = best ? `${best}s` : "--";
+}
+
+function winGame() {
+  hardHideJumpscare();
+  gameState.gameStarted = false;
+
+  ui.hud.classList.add("hidden");
+  ui.gameWrap.classList.add("hidden");
+  ui.messageBox.classList.add("hidden");
+  ui.endScreen.classList.remove("hidden");
+
+  const totalSeconds = Math.floor((Date.now() - gameState.startTime) / 1000);
+  setBestTime(totalSeconds);
   playWinSound();
 
-  endEyebrow.textContent = "ROUND COMPLETE";
-  endTitle.textContent = "You Escaped!";
-  endText.textContent = "You got all 5 keys and escaped the pizzaria.";
-  endTime.textContent = `${seconds}s`;
-  endHearts.textContent = `${hearts}`;
-  endKeys.textContent = `${got.length}/${totalKeys}`;
-  endBestTime.textContent = `${localStorage.getItem(bestKey)}s`;
+  ui.endEyebrow.textContent = "ROUND COMPLETE";
+  ui.endTitle.textContent = "You Escaped!";
+  ui.endText.textContent = "You got all 5 keys and escaped the pizzaria.";
+  ui.endTime.textContent = `${totalSeconds}s`;
+  ui.endHearts.textContent = `${gameState.hearts}`;
+  ui.endKeys.textContent = `${gameState.collectedKeys.length}/${totalKeys}`;
 
-  updateBest();
+  const best = getBestTime();
+  ui.endBestTime.textContent = best ? `${best}s` : "--";
+
+  updateBestTime();
 }
 
-function lose() {
-  gameStarted = false;
-  hud.classList.add("hidden");
-  gameWrap.classList.add("hidden");
-  messageBox.classList.add("hidden");
-  endScreen.classList.remove("hidden");
-
-  endEyebrow.textContent = "GAME OVER";
-  endTitle.textContent = "You Were Caught!";
-  endText.textContent = "The killer rabbit got you in the pizzaria.";
-  endTime.textContent = "--";
-  endHearts.textContent = "0";
-  endKeys.textContent = `${got.length}/${totalKeys}`;
-  endBestTime.textContent = localStorage.getItem("rabbitEscapePizzariaBestTime")
-    ? `${localStorage.getItem("rabbitEscapePizzariaBestTime")}s`
-    : "--";
+function updateBestTime() {
+  const best = getBestTime();
+  ui.bestTimeText.textContent = best ? `${best}s` : "--";
 }
 
-function place(el, room) {
-  el.style.top = pos[room][0] + "%";
-  el.style.left = pos[room][1] + "%";
+function updateDanger() {
+  const distance = getDistance(gameState.playerRoom, gameState.killerRoom);
+
+  let label = "Low";
+  let width = 18;
+
+  if (distance === 0) {
+    label = "Caught";
+    width = 100;
+  } else if (distance === 1) {
+    label = "High";
+    width = 85;
+  } else if (distance === 2) {
+    label = "Medium";
+    width = 58;
+  }
+
+  if (gameState.safeTurns > 0) {
+    label = "Safe";
+    width = 12;
+  }
+
+  ui.dangerText.textContent = label;
+  ui.dangerBar.style.width = `${width}%`;
 }
 
-function updateGoal() {
-  if (!goalText) return;
+function updateHearts() {
+  ui.heartsText.textContent = "❤️ ".repeat(gameState.hearts).trim();
+}
 
-  if (!gameStarted) {
-    goalText.textContent = "Find 5 keys";
+function updateGoalStatus() {
+  if (!gameState.gameStarted) {
+    ui.goalText.textContent = "Find 5 keys";
+    ui.exitStateText.textContent = "Locked";
     return;
   }
 
-  if (got.length === totalKeys) {
-    goalText.textContent = "Reach the Exit";
+  if (exitIsOpen()) {
+    ui.goalText.textContent = "Reach the Exit";
+    ui.exitStateText.textContent = "OPEN";
   } else {
-    const left = totalKeys - got.length;
-    goalText.textContent = `Find ${left} more key${left === 1 ? "" : "s"}`;
+    const keysLeft = gameState.keyRooms.length - gameState.collectedKeys.length;
+    ui.goalText.textContent = `Find ${keysLeft} more key${keysLeft === 1 ? "" : "s"}`;
+    ui.exitStateText.textContent = "Locked";
   }
 }
 
-function updateBest() {
-  const best = localStorage.getItem("rabbitEscapePizzariaBestTime");
-  if (bestTimeText) {
-    bestTimeText.textContent = best ? `${best}s` : "--";
-  }
+function setTokenPosition(token, roomName) {
+  const position = roomPositions[roomName];
+  token.style.top = `${position.top}%`;
+  token.style.left = `${position.left}%`;
 }
 
-function update() {
-  place(playerToken, player);
-  place(killerToken, killer);
+function renderKeys() {
+  if (!ui.keyLayer) return;
+  ui.keyLayer.innerHTML = "";
 
-  keyCount.textContent = got.length;
-  heartsText.textContent = "❤️ ".repeat(hearts).trim();
-  playerRoom.textContent = player;
-  killerRoom.textContent = killer;
-  exitState.textContent = got.length === totalKeys ? "OPEN" : "Locked";
+  gameState.keyRooms.forEach((room) => {
+    if (gameState.collectedKeys.includes(room)) return;
 
-  const d = dist(player, killer);
-  if (safeTurns > 0) {
-    dangerText.textContent = "Safe";
-    dangerBar.style.width = "12%";
-  } else {
-    dangerText.textContent = d <= 1 ? "High" : d === 2 ? "Medium" : "Low";
-    dangerBar.style.width = d <= 1 ? "90%" : d === 2 ? "55%" : "20%";
-  }
+    const keyPosition = gameState.keyVisualPositions[room];
+    if (!keyPosition) return;
 
-  updateGoal();
-  updateBest();
+    const keyElement = document.createElement("div");
+    keyElement.className = "map-key";
+    keyElement.style.top = `${keyPosition.top}%`;
+    keyElement.style.left = `${keyPosition.left}%`;
+    keyElement.title = `${room} key`;
 
-  document.querySelectorAll(".room").forEach((btn) => {
-    const room = btn.dataset.room;
-
-    btn.classList.remove(
-      "connected",
-      "locked",
-      "current",
-      "killer-room",
-      "key-room",
-      "exit-open",
-      "room-cleared",
-      "safe-turn"
-    );
-
-    if (room === player) {
-      btn.classList.add("current");
-      btn.disabled = true;
-    } else if (rooms[player].includes(room)) {
-      btn.classList.add("connected");
-      btn.disabled = false;
-    } else {
-      btn.classList.add("locked");
-      btn.disabled = true;
-    }
-
-    if (room === killer) {
-      btn.classList.add("killer-room");
-    }
-
-    if (keys.includes(room) && !got.includes(room)) {
-      btn.classList.add("key-room");
-    }
-
-    if (got.includes(room)) {
-      btn.classList.add("room-cleared");
-    }
-
-    if (room === "Exit" && got.length === totalKeys) {
-      btn.classList.add("exit-open");
-    }
-
-    if (safeTurns > 0 && room === player) {
-      btn.classList.add("safe-turn");
-    }
+    ui.keyLayer.appendChild(keyElement);
   });
 }
 
-function msg(t) {
-  messageText.textContent = t;
+function updateBoard() {
+  ui.roomButtons.forEach((button) => {
+    const room = button.dataset.room;
+    button.classList.remove("connected", "locked");
+
+    if (room === gameState.playerRoom) {
+      button.classList.add("locked");
+      button.disabled = true;
+    } else if (rooms[gameState.playerRoom].includes(room)) {
+      button.classList.add("connected");
+      button.disabled = false;
+    } else {
+      button.classList.add("locked");
+      button.disabled = true;
+    }
+  });
+
+  ui.roomRings.forEach((ring) => {
+    const room = ring.dataset.ring;
+    ring.classList.remove("connected", "current", "killer-room", "exit-open", "safe-turn");
+
+    if (room === gameState.playerRoom) {
+      if (gameState.safeTurns > 0) {
+        ring.classList.add("safe-turn");
+      } else {
+        ring.classList.add("current");
+      }
+    } else if (rooms[gameState.playerRoom].includes(room)) {
+      ring.classList.add("connected");
+    }
+
+    if (room === gameState.killerRoom) {
+      ring.classList.add("killer-room");
+    }
+
+    if (room === "Exit" && exitIsOpen()) {
+      ring.classList.add("exit-open");
+    }
+  });
+
+  setTokenPosition(ui.playerToken, gameState.playerRoom);
+  setTokenPosition(ui.killerToken, gameState.killerRoom);
+  renderKeys();
 }
 
-update();
+function maybeShowDangerWarning() {
+  if (gameState.safeTurns > 0) return;
+
+  const distance = getDistance(gameState.playerRoom, gameState.killerRoom);
+  const now = Date.now();
+
+  if (distance === 1 && now - gameState.lastWarningTime > 1200) {
+    showMessage("Warning: The killer is very close!");
+    playWarningSound();
+    flashScreen("warning");
+    gameState.lastWarningTime = now;
+  } else if (exitIsOpen() && gameState.playerRoom !== "Exit") {
+    showMessage("All keys collected! Run to the Exit!");
+  }
+}
+
+function updateUI() {
+  ui.keyCountText.textContent = gameState.collectedKeys.length;
+  ui.playerRoomText.textContent = gameState.playerRoom;
+  ui.killerRoomText.textContent = gameState.killerRoom;
+  updateHearts();
+  updateBestTime();
+  updateGoalStatus();
+  updateBoard();
+  updateDanger();
+}
+
+function showMessage(text) {
+  ui.messageText.textContent = text;
+}
+
+hardHideJumpscare();
+updateUI();
