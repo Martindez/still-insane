@@ -1,10 +1,10 @@
 const rooms = {
-  Electrical: ["Gym", "Playground"],
+  Electrical: ["Gym", "Security"],
   Gym: ["Electrical", "Kitchen", "Playground"],
-  Kitchen: ["Gym", "Security"],
-  Security: ["Kitchen", "Playground", "Exit"],
-  Playground: ["Electrical", "Gym", "Security"],
-  Exit: ["Security"]
+  Kitchen: ["Gym", "Playground"],
+  Security: ["Electrical", "Playground"],
+  Playground: ["Gym", "Kitchen", "Security", "Exit"],
+  Exit: ["Playground"]
 };
 
 const possibleKeyRooms = ["Electrical", "Gym", "Kitchen", "Security", "Playground"];
@@ -20,7 +20,7 @@ const roomPositions = {
 };
 
 let playerRoom = "Playground";
-let killerRoom = "Security";
+let killerRoom = "Kitchen";
 let keyRooms = [];
 let collectedKeys = [];
 let hearts = 3;
@@ -29,6 +29,7 @@ let gameStarted = false;
 let startTime = 0;
 let lastWarningTime = 0;
 let audioContext = null;
+let safeTurns = 0;
 
 const startScreen = document.getElementById("startScreen");
 const hud = document.getElementById("hud");
@@ -57,6 +58,7 @@ const messageText = document.getElementById("messageText");
 const playerToken = document.getElementById("playerToken");
 const killerToken = document.getElementById("killerToken");
 const flashOverlay = document.getElementById("flashOverlay");
+const jumpscareOverlay = document.getElementById("jumpscareOverlay");
 
 const startBtn = document.getElementById("startBtn");
 const restartBtn = document.getElementById("restartBtn");
@@ -113,22 +115,22 @@ function playTone(frequency, duration, type = "sine", volume = 0.05, fade = 0.02
 }
 
 function playMoveSound() {
-  playTone(420, 0.09, "triangle", 0.035);
+  playTone(420, 0.08, "triangle", 0.035);
 }
 
 function playKeySound() {
-  playTone(660, 0.08, "triangle", 0.045);
+  playTone(660, 0.08, "triangle", 0.05);
   setTimeout(() => playTone(880, 0.12, "triangle", 0.04), 70);
 }
 
 function playWarningSound() {
-  playTone(240, 0.11, "sawtooth", 0.045);
-  setTimeout(() => playTone(200, 0.11, "sawtooth", 0.04), 90);
+  playTone(230, 0.1, "sawtooth", 0.05);
+  setTimeout(() => playTone(200, 0.1, "sawtooth", 0.045), 80);
 }
 
 function playHitSound() {
-  playTone(180, 0.12, "sawtooth", 0.06);
-  setTimeout(() => playTone(120, 0.18, "sawtooth", 0.055), 70);
+  playTone(180, 0.1, "sawtooth", 0.065);
+  setTimeout(() => playTone(120, 0.16, "sawtooth", 0.06), 70);
 }
 
 function playWinSound() {
@@ -137,11 +139,35 @@ function playWinSound() {
   setTimeout(() => playTone(784, 0.18, "triangle", 0.05), 200);
 }
 
+function playLockedSound() {
+  playTone(150, 0.12, "square", 0.04);
+}
+
 function flashScreen(type = "warning") {
   if (!flashOverlay) return;
   flashOverlay.classList.remove("active", "warning");
   void flashOverlay.offsetWidth;
   flashOverlay.classList.add(type);
+}
+
+function shakeScreen() {
+  document.body.classList.remove("shake");
+  void document.body.offsetWidth;
+  document.body.classList.add("shake");
+}
+
+function showJumpscare(duration = 650) {
+  if (!jumpscareOverlay) return Promise.resolve();
+
+  jumpscareOverlay.classList.remove("hidden");
+  shakeScreen();
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      jumpscareOverlay.classList.add("hidden");
+      resolve();
+    }, duration);
+  });
 }
 
 function shuffle(array) {
@@ -161,9 +187,10 @@ function startGame() {
   initAudio();
   assignRandomKeys();
   playerRoom = "Playground";
-  killerRoom = "Security";
+  killerRoom = "Kitchen";
   collectedKeys = [];
   hearts = maxHearts;
+  safeTurns = 0;
   gameStarted = true;
   startTime = Date.now();
   lastWarningTime = 0;
@@ -184,10 +211,11 @@ function startGame() {
 
 function resetGame() {
   playerRoom = "Playground";
-  killerRoom = "Security";
+  killerRoom = "Kitchen";
   keyRooms = [];
   collectedKeys = [];
   hearts = maxHearts;
+  safeTurns = 0;
   gameStarted = false;
   startTime = 0;
   lastWarningTime = 0;
@@ -208,12 +236,16 @@ function resetGame() {
 
 function movePlayer(targetRoom) {
   if (!rooms[playerRoom].includes(targetRoom)) {
-    showMessage("You can only move to connected rooms.");
+    showMessage("You can only move to glowing connected rooms.");
     return;
   }
 
   playerRoom = targetRoom;
   playMoveSound();
+
+  if (safeTurns > 0) {
+    safeTurns -= 1;
+  }
 
   if (keyRooms.includes(playerRoom) && !collectedKeys.includes(playerRoom)) {
     collectedKeys.push(playerRoom);
@@ -221,28 +253,27 @@ function movePlayer(targetRoom) {
 
     if (collectedKeys.length === keyRooms.length) {
       showMessage("All 4 keys collected! The Exit is OPEN!");
-      playTone(980, 0.16, "triangle", 0.05);
     } else {
       const keysLeft = keyRooms.length - collectedKeys.length;
       showMessage(`You found a key in ${playerRoom}. ${keysLeft} key left.`);
     }
   } else if (playerRoom === "Exit" && !exitIsOpen()) {
     showMessage("The Exit is locked. Collect all 4 keys first.");
-    playTone(150, 0.12, "square", 0.04);
+    playLockedSound();
   } else {
     showMessage(`You moved to ${playerRoom}.`);
   }
 
-  if (playerRoom === killerRoom) {
+  if (safeTurns === 0 && playerRoom === killerRoom) {
     playerHit();
-    if (!gameStarted) return;
+    return;
   }
 
   moveKiller();
 
-  if (playerRoom === killerRoom) {
+  if (safeTurns === 0 && playerRoom === killerRoom) {
     playerHit();
-    if (!gameStarted) return;
+    return;
   }
 
   if (playerRoom === "Exit" && exitIsOpen()) {
@@ -255,9 +286,13 @@ function movePlayer(targetRoom) {
 }
 
 function moveKiller() {
+  if (safeTurns > 0 && Math.random() < 0.55) {
+    return;
+  }
+
   const path = shortestPath(killerRoom, playerRoom);
 
-  if (path.length > 1 && Math.random() < 0.88) {
+  if (path.length > 1 && Math.random() < 0.85) {
     killerRoom = path[1];
   } else {
     const choices = rooms[killerRoom];
@@ -294,10 +329,13 @@ function exitIsOpen() {
   return collectedKeys.length === keyRooms.length;
 }
 
-function playerHit() {
+async function playerHit() {
+  if (!gameStarted) return;
+
   hearts -= 1;
   playHitSound();
   flashScreen("active");
+  await showJumpscare();
 
   if (hearts <= 0) {
     loseGame();
@@ -305,7 +343,8 @@ function playerHit() {
   }
 
   playerRoom = "Playground";
-  showMessage(`Caught! You lost 1 heart. ${hearts} heart${hearts === 1 ? "" : "s"} left. Back to Playground.`);
+  safeTurns = 1;
+  showMessage(`Caught! You lost 1 heart. ${hearts} heart${hearts === 1 ? "" : "s"} left. Safe for 1 move.`);
   updateUI();
 }
 
@@ -322,7 +361,9 @@ function loseGame() {
   endTime.textContent = "--";
   endHearts.textContent = "0";
   endKeys.textContent = `${collectedKeys.length}/${totalKeys}`;
-  endBestTime.textContent = localStorage.getItem("rabbitEscapeBestTime") ? `${localStorage.getItem("rabbitEscapeBestTime")}s` : "--";
+  endBestTime.textContent = localStorage.getItem("rabbitEscapeBestTime")
+    ? `${localStorage.getItem("rabbitEscapeBestTime")}s`
+    : "--";
 
   if (nextLevelBtn) {
     nextLevelBtn.classList.add("hidden");
@@ -369,17 +410,22 @@ function updateDanger() {
   const d = getDistance(playerRoom, killerRoom);
 
   let label = "Low";
-  let width = 20;
+  let width = 18;
 
   if (d === 0) {
     label = "Caught";
     width = 100;
   } else if (d === 1) {
     label = "High";
-    width = 88;
+    width = 85;
   } else if (d === 2) {
     label = "Medium";
     width = 58;
+  }
+
+  if (safeTurns > 0) {
+    label = "Safe";
+    width = 12;
   }
 
   dangerText.textContent = label;
@@ -423,7 +469,8 @@ function updateBoard() {
       "killer-room",
       "exit-open",
       "room-cleared",
-      "key-room"
+      "key-room",
+      "safe-turn"
     );
 
     if (room === playerRoom) {
@@ -452,6 +499,10 @@ function updateBoard() {
     if (room === "Exit" && exitIsOpen()) {
       button.classList.add("exit-open");
     }
+
+    if (safeTurns > 0 && room === playerRoom) {
+      button.classList.add("safe-turn");
+    }
   });
 
   setTokenPosition(playerToken, playerRoom);
@@ -459,6 +510,8 @@ function updateBoard() {
 }
 
 function maybeShowDangerWarning() {
+  if (safeTurns > 0) return;
+
   const d = getDistance(playerRoom, killerRoom);
   const now = Date.now();
 

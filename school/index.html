@@ -9,6 +9,12 @@
 <body>
   <div id="flashOverlay" class="flash-overlay"></div>
 
+  <div id="jumpscareOverlay" class="jumpscare-overlay hidden">
+    <div class="jumpscare-bg"></div>
+    <img src="../assets/killer.png" alt="Killer Rabbit" class="jumpscare-killer" />
+    <div class="jumpscare-text">CAUGHT!</div>
+  </div>
+
   <div class="app">
 
     <header class="topbar">
@@ -24,22 +30,10 @@
           Collect all 4 keys, avoid the killer rabbit, and escape through the Exit.
         </p>
 
-        <div class="start-characters">
-          <div class="start-character">
-            <img src="../assets/player.png" alt="Player" class="start-character-img hero-preview" />
-            <p><strong>You</strong><br />Find the keys</p>
-          </div>
-
-          <div class="start-character">
-            <img src="../assets/killer.png" alt="Killer rabbit" class="start-character-img killer-preview" />
-            <p><strong>Killer Rabbit</strong><br />Do not get caught</p>
-          </div>
-        </div>
-
         <div class="start-rules">
-          <div class="rule-pill">Click connected rooms to move</div>
-          <div class="rule-pill">4 random key rooms each round</div>
-          <div class="rule-pill">Get all keys to unlock Exit</div>
+          <div class="rule-pill">Click glowing rooms to move</div>
+          <div class="rule-pill">Only connected rooms work</div>
+          <div class="rule-pill">Collect 4 keys to unlock Exit</div>
           <div class="rule-pill">Caught 3 times = lose</div>
         </div>
 
@@ -54,7 +48,7 @@
         <div><strong>Hearts:</strong> <span id="hearts">❤️ ❤️ ❤️</span></div>
         <div><strong>Danger:</strong> <span id="dangerText">Low</span></div>
         <div><strong>Player:</strong> <span id="playerRoom">Playground</span></div>
-        <div><strong>Killer:</strong> <span id="killerRoom">Security</span></div>
+        <div><strong>Killer:</strong> <span id="killerRoom">Kitchen</span></div>
         <div><strong>Exit:</strong> <span id="exitState">Locked</span></div>
         <div><strong>Best Time:</strong> <span id="bestTime">--</span></div>
       </div>

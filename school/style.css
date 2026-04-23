@@ -85,7 +85,7 @@ body {
   width: 20%;
   height: 100%;
   background: linear-gradient(90deg, #41b853, #f0b000, #d50000);
-  transition: width 0.25s ease;
+  transition: width 0.2s ease;
 }
 
 .map-board {
@@ -109,14 +109,14 @@ body {
 .room-marker {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 2px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 18px;
   cursor: pointer;
   z-index: 3;
   color: transparent;
   font-size: 0;
-  transition: 0.2s ease;
+  transition: 0.18s ease;
 }
 
 .room-marker:hover {
@@ -124,78 +124,95 @@ body {
 }
 
 .room-marker.connected {
-  border-color: rgba(80, 220, 120, 0.8);
-  background: rgba(80, 220, 120, 0.14);
+  border-color: rgba(80, 220, 120, 0.9);
+  background: rgba(80, 220, 120, 0.16);
+  box-shadow:
+    0 0 0 2px rgba(80, 220, 120, 0.14),
+    0 0 18px rgba(80, 220, 120, 0.18);
 }
 
 .room-marker.locked {
-  opacity: 0.22;
+  opacity: 0.18;
 }
 
 .room-marker.current {
   border-color: white;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.20),
+    0 0 18px rgba(255, 255, 255, 0.08);
 }
 
 .room-marker.killer-room {
   border-color: rgba(255, 0, 0, 0.95);
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.16);
+  box-shadow:
+    0 0 0 3px rgba(255, 0, 0, 0.16),
+    0 0 20px rgba(180, 0, 0, 0.22);
 }
 
 .room-marker.key-room {
-  box-shadow: 0 0 0 2px rgba(255, 208, 0, 0.28);
+  border-color: rgba(255, 208, 0, 0.9);
+  box-shadow:
+    0 0 0 2px rgba(255, 208, 0, 0.22),
+    0 0 18px rgba(255, 208, 0, 0.16);
+  animation: keyPulse 1s infinite alternate;
 }
 
 .room-marker.exit-open {
   border-color: #4cff72;
-  box-shadow: 0 0 0 3px rgba(76, 255, 114, 0.2);
+  box-shadow:
+    0 0 0 3px rgba(76, 255, 114, 0.2),
+    0 0 24px rgba(76, 255, 114, 0.25);
   background: rgba(76, 255, 114, 0.12);
 }
 
 .room-marker.room-cleared {
-  opacity: 0.18;
+  opacity: 0.12;
+}
+
+.room-marker.safe-turn {
+  outline: 3px solid rgba(80, 180, 255, 0.55);
 }
 
 .room-marker.electrical {
   top: 18%;
   left: 20%;
-  width: 170px;
-  height: 70px;
+  width: 180px;
+  height: 78px;
 }
 
 .room-marker.gym {
   top: 18%;
   left: 50%;
-  width: 145px;
-  height: 70px;
+  width: 165px;
+  height: 78px;
 }
 
 .room-marker.kitchen {
   top: 18%;
   left: 80%;
-  width: 155px;
-  height: 70px;
+  width: 170px;
+  height: 78px;
 }
 
 .room-marker.security {
   top: 52%;
   left: 14%;
-  width: 155px;
-  height: 70px;
+  width: 165px;
+  height: 78px;
 }
 
 .room-marker.playground {
   top: 56%;
   left: 50%;
-  width: 190px;
-  height: 72px;
+  width: 210px;
+  height: 82px;
 }
 
 .room-marker.exit-room {
   top: 83%;
   left: 50%;
-  width: 120px;
-  height: 72px;
+  width: 135px;
+  height: 78px;
 }
 
 .token {
@@ -210,25 +227,25 @@ body {
 }
 
 .player-token {
-  width: 74px;
-  height: 74px;
+  width: 76px;
+  height: 76px;
   object-fit: contain;
-  opacity: 1;
   filter:
     drop-shadow(0 0 2px #ffffff)
     drop-shadow(0 0 8px #ffffff)
-    drop-shadow(0 0 16px rgba(80, 180, 255, 0.95))
-    drop-shadow(0 0 28px rgba(80, 180, 255, 0.75));
-  animation: heroBounce 1.2s infinite alternate;
+    drop-shadow(0 0 18px rgba(80, 180, 255, 0.95))
+    drop-shadow(0 0 30px rgba(80, 180, 255, 0.75));
+  animation: heroBounce 1.15s infinite alternate;
 }
 
 .killer-token {
-  width: 88px;
-  height: 88px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
   filter:
+    drop-shadow(0 0 2px #000)
     drop-shadow(0 0 10px red)
-    drop-shadow(0 0 24px darkred)
+    drop-shadow(0 0 22px darkred)
     drop-shadow(0 0 34px rgba(120, 0, 0, 0.95));
   animation: killerPulse 0.65s infinite alternate;
 }
@@ -241,6 +258,19 @@ body {
 @keyframes killerPulse {
   from { transform: translate(-50%, -50%) scale(1); }
   to { transform: translate(-50%, -50%) scale(1.14); }
+}
+
+@keyframes keyPulse {
+  from {
+    box-shadow:
+      0 0 0 2px rgba(255, 208, 0, 0.16),
+      0 0 10px rgba(255, 208, 0, 0.12);
+  }
+  to {
+    box-shadow:
+      0 0 0 2px rgba(255, 208, 0, 0.28),
+      0 0 20px rgba(255, 208, 0, 0.22);
+  }
 }
 
 #messageText {
@@ -274,36 +304,6 @@ body {
 .end-text {
   color: #d8d8d8;
   margin: 0 0 18px;
-}
-
-.start-characters {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-.start-character {
-  width: 180px;
-}
-
-.start-character-img {
-  width: 92px;
-  height: 92px;
-  object-fit: contain;
-}
-
-.hero-preview {
-  filter:
-    drop-shadow(0 0 8px rgba(80, 180, 255, 0.9))
-    drop-shadow(0 0 18px rgba(255, 255, 255, 0.35));
-}
-
-.killer-preview {
-  filter:
-    drop-shadow(0 0 10px red)
-    drop-shadow(0 0 24px darkred);
 }
 
 .start-rules {
@@ -361,10 +361,10 @@ body {
 .flash-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 0, 0, 0.24);
+  background: rgba(255, 0, 0, 0.22);
   opacity: 0;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 9998;
 }
 
 .flash-overlay.active {
@@ -372,7 +372,56 @@ body {
 }
 
 .flash-overlay.warning {
-  animation: flashWarning 0.28s ease-out;
+  animation: flashWarning 0.25s ease-out;
+}
+
+.jumpscare-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.jumpscare-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 0, 0, 0.84);
+}
+
+.jumpscare-killer {
+  position: relative;
+  width: min(65vw, 480px);
+  max-height: 80vh;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 20px red)
+    drop-shadow(0 0 40px darkred);
+  animation: jumpscarePop 0.48s ease-out;
+}
+
+.jumpscare-text {
+  position: absolute;
+  bottom: 10%;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-shadow: 0 0 12px red;
+  animation: jumpscareText 0.45s ease-out;
+}
+
+@keyframes jumpscarePop {
+  0% { transform: scale(0.35) rotate(-4deg); opacity: 0; }
+  45% { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes jumpscareText {
+  0% { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes flashHit {
@@ -387,6 +436,19 @@ body {
   100% { opacity: 0; }
 }
 
+.shake {
+  animation: screenShake 0.25s linear;
+}
+
+@keyframes screenShake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-5px, 2px); }
+  40% { transform: translate(5px, -2px); }
+  60% { transform: translate(-4px, -1px); }
+  80% { transform: translate(4px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
 @media (max-width: 700px) {
   .hud-grid {
     grid-template-columns: repeat(2, minmax(120px, 1fr));
@@ -399,21 +461,17 @@ body {
   .room-marker.security,
   .room-marker.playground,
   .room-marker.exit-room {
-    transform: translate(-50%, -50%) scale(0.82);
+    transform: translate(-50%, -50%) scale(0.84);
   }
 
   .player-token {
-    width: 58px;
-    height: 58px;
+    width: 60px;
+    height: 60px;
   }
 
   .killer-token {
-    width: 64px;
-    height: 64px;
-  }
-
-  #messageText {
-    font-size: 0.95rem;
+    width: 70px;
+    height: 70px;
   }
 
   .end-stats {
