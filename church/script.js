@@ -34,12 +34,15 @@ const possibleKeyRooms = [
 
 const totalKeys = 6;
 
+let moveMode = "sneak";
+
 let gameState = {
   playerRoom: "Entrance",
   killerRoom: "Bell Tower",
   keyRooms: [],
   collectedKeys: [],
   hearts: 1,
+  turnCount: 0,
   gameStarted: false
 };
 
@@ -68,13 +71,24 @@ const ui = {
   flashOverlay: document.getElementById("flashOverlay"),
   jumpscareOverlay: document.getElementById("jumpscareOverlay"),
   mapBoard: document.querySelector(".map-board"),
-  roomButtons: document.querySelectorAll(".room-hotspot")
+  roomButtons: document.querySelectorAll(".room-hotspot"),
+  sneakBtn: document.getElementById("sneakBtn"),
+  runBtn: document.getElementById("runBtn"),
+  moveModeText: document.getElementById("moveModeText")
 };
 
 ui.restartBtn.addEventListener("click", startGame);
 
 ui.menuBtn.addEventListener("click", () => {
   window.location.href = "../";
+});
+
+ui.sneakBtn.addEventListener("click", () => {
+  setMoveMode("sneak");
+});
+
+ui.runBtn.addEventListener("click", () => {
+  setMoveMode("run");
 });
 
 ui.roomButtons.forEach((button) => {
@@ -85,6 +99,20 @@ ui.roomButtons.forEach((button) => {
 });
 
 document.addEventListener("pointerdown", startAmbientMusic);
+
+function setMoveMode(mode) {
+  moveMode = mode;
+
+  ui.sneakBtn.classList.toggle("active", mode === "sneak");
+  ui.runBtn.classList.toggle("active", mode === "run");
+  ui.moveModeText.textContent = mode === "sneak" ? "Sneak" : "Run";
+
+  showMessage(
+    mode === "sneak"
+      ? "Sneak mode: quieter, but the killer still moves."
+      : "Run mode: loud. The killer becomes more aggressive."
+  );
+}
 
 function startAmbientMusic() {
   const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
@@ -151,6 +179,7 @@ function startGame() {
   initAudio();
   startAmbientMusic();
   createPlayerLight();
+  setMoveMode("sneak");
 
   gameState = {
     playerRoom: "Entrance",
@@ -158,6 +187,7 @@ function startGame() {
     keyRooms: shuffle([...possibleKeyRooms]).slice(0, totalKeys),
     collectedKeys: [],
     hearts: 1,
+    turnCount: 0,
     gameStarted: true
   };
 
@@ -165,7 +195,7 @@ function startGame() {
   ui.hud.classList.remove("hidden");
   ui.gameWrap.classList.remove("hidden");
 
-  showMessage("Hardmode: Find all 6 keys and escape through Exit.");
+  showMessage("Hardmode: Find 6 keys. Sneak or run carefully.");
   updateUI();
 }
 
@@ -187,20 +217,32 @@ function movePlayer(room) {
   }
 
   gameState.playerRoom = room;
-  playTone(440, 0.08, "triangle", 0.035);
+  gameState.turnCount++;
+
+  playTone(moveMode === "run" ? 560 : 390, 0.08, "triangle", 0.035);
 
   collectKeyIfNeeded();
 
-  moveKillerSmart();
-  checkDanger();
+  if (moveMode === "sneak") {
+    moveKillerSmart(0.45);
+  } else {
+    moveKillerSmart(0.9);
 
-  if (gameState.gameStarted && gameState.collectedKeys.length >= 3) {
-    moveKillerSmart();
-    checkDanger();
+    if (Math.random() < 0.55) {
+      moveKillerSmart(0.9);
+      showMessage("The killer heard you running!");
+    }
   }
 
+  if (gameState.collectedKeys.length >= 4 && Math.random() < 0.35) {
+    moveKillerSmart(0.8);
+    showMessage("The church bell rings. The killer moves again.");
+  }
+
+  checkDanger();
   checkWin();
   updateUI();
+  dangerWarning();
 }
 
 function collectKeyIfNeeded() {
@@ -209,19 +251,15 @@ function collectKeyIfNeeded() {
   if (gameState.keyRooms.includes(room) && !gameState.collectedKeys.includes(room)) {
     gameState.collectedKeys.push(room);
     showMessage(`You found a key in ${room}!`);
-
     playTone(740, 0.1, "triangle", 0.05);
     setTimeout(() => playTone(940, 0.12, "triangle", 0.05), 90);
   }
 }
 
-/* HARDMODE SMARTER AI */
-function moveKillerSmart() {
-  if (gameState.killerRoom === "Exit") return;
-
+function moveKillerSmart(chaseChance) {
   const path = findShortestPath(gameState.killerRoom, gameState.playerRoom);
 
-  if (path.length > 1 && Math.random() < 0.75) {
+  if (path.length > 1 && Math.random() < chaseChance) {
     gameState.killerRoom = path[1];
   } else {
     const options = rooms[gameState.killerRoom].filter((room) => room !== "Exit");
@@ -248,6 +286,15 @@ function findShortestPath(start, target) {
   }
 
   return [start];
+}
+
+function dangerWarning() {
+  const connected = rooms[gameState.playerRoom];
+
+  if (connected.includes(gameState.killerRoom)) {
+    showMessage("You hear breathing nearby...");
+    playTone(90, 0.18, "sawtooth", 0.035);
+  }
 }
 
 function checkDanger() {
@@ -306,8 +353,10 @@ function updateUI() {
 
 function moveToken(token, room) {
   const pos = roomPositions[room];
+
   token.style.top = `${pos.top}%`;
   token.style.left = `${pos.left}%`;
+
   animateToken(token);
 }
 
@@ -321,8 +370,11 @@ function moveLight(room) {
   if (!playerLight) return;
 
   const pos = roomPositions[room];
-  playerLight.style.top = `${pos.top}%`;
-  playerLight.style.left = `${pos.left}%`;
+
+  setTimeout(() => {
+    playerLight.style.top = `${pos.top}%`;
+    playerLight.style.left = `${pos.left}%`;
+  }, 80);
 }
 
 function drawKeys() {
@@ -333,9 +385,11 @@ function drawKeys() {
 
     const pos = roomPositions[room];
     const key = document.createElement("div");
+
     key.className = "map-key";
     key.style.top = `${pos.top + 5}%`;
     key.style.left = `${pos.left + 5}%`;
+
     ui.keyLayer.appendChild(key);
   });
 }
@@ -352,6 +406,7 @@ function flash() {
 
 function showJumpscare() {
   ui.jumpscareOverlay.classList.remove("hidden");
+
   setTimeout(() => {
     ui.jumpscareOverlay.classList.add("hidden");
   }, 900);

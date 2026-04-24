@@ -26,12 +26,18 @@
     <section id="hud" class="panel">
       <div class="hud-grid">
         <div><strong>Keys:</strong> <span id="keyCount">0</span>/6</div>
-        <div><strong>Hearts:</strong> <span id="hearts">❤️</span></div>
+        <div><strong>Mode:</strong> <span id="moveModeText">Sneak</span></div>
         <div><strong>Player:</strong> <span id="playerRoom">Entrance</span></div>
         <div><strong>Killer:</strong> <span id="killerRoom">Bell Tower</span></div>
         <div><strong>Exit:</strong> <span id="exitState">Locked</span></div>
       </div>
-      <p id="messageText" class="message">Find 6 keys and escape the church.</p>
+
+      <div class="mode-buttons">
+        <button id="sneakBtn" class="mode-btn active" type="button">SNEAK</button>
+        <button id="runBtn" class="mode-btn" type="button">RUN</button>
+      </div>
+
+      <p id="messageText" class="message">Sneak is safer. Run is faster, but louder.</p>
     </section>
 
     <section id="gameWrap" class="panel">

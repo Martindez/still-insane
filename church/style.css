@@ -88,6 +88,29 @@ body {
   font-weight: 700;
 }
 
+.mode-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mode-btn {
+  background: #2a2a2a;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  background: #d81f26;
+  border-color: #ff4242;
+  box-shadow: 0 0 14px rgba(255, 0, 0, 0.5);
+}
+
 .map-board {
   position: relative;
   width: 100%;
@@ -201,7 +224,7 @@ body {
   );
   filter: blur(2px);
   mix-blend-mode: screen;
-  transition: top 0.25s ease, left 0.25s ease;
+  transition: top 0.35s ease, left 0.35s ease;
   animation: flashlightPulse 2.2s infinite alternate;
 }
 
@@ -227,7 +250,7 @@ body {
   position: absolute;
   object-fit: contain;
   pointer-events: none;
-  transition: top 0.25s ease, left 0.25s ease;
+  transition: top 0.45s ease, left 0.45s ease;
 }
 
 .player-token {
@@ -248,14 +271,15 @@ body {
   filter:
     drop-shadow(0 0 12px rgba(255, 0, 0, 0.95))
     drop-shadow(0 12px 12px black);
+  animation: killerIdle 1.3s infinite alternate;
 }
 
 .token.moving {
-  animation: movePop 0.26s ease;
+  animation: movePop 0.35s ease;
 }
 
 .killer-token.moving {
-  animation: killerMovePop 0.3s ease;
+  animation: killerMovePop 0.35s ease;
 }
 
 .flash-overlay {
@@ -308,6 +332,20 @@ body {
   }
 }
 
+@keyframes killerIdle {
+  from {
+    filter:
+      drop-shadow(0 0 8px rgba(255, 0, 0, 0.7))
+      drop-shadow(0 12px 12px black);
+  }
+
+  to {
+    filter:
+      drop-shadow(0 0 20px rgba(255, 0, 0, 1))
+      drop-shadow(0 12px 12px black);
+  }
+}
+
 @keyframes movePop {
   0% { scale: 1; }
   50% { scale: 1.12; }
@@ -315,9 +353,9 @@ body {
 }
 
 @keyframes killerMovePop {
-  0% { scale: 1; }
-  50% { scale: 1.16; }
-  100% { scale: 1; }
+  0% { scale: 1; rotate: 0deg; }
+  50% { scale: 1.18; rotate: -3deg; }
+  100% { scale: 1; rotate: 0deg; }
 }
 
 @keyframes pulse {
@@ -376,5 +414,13 @@ body {
   .player-light {
     width: 160px;
     height: 160px;
+  }
+
+  .mode-buttons {
+    gap: 6px;
+  }
+
+  .mode-btn {
+    padding: 9px 16px;
   }
 }
