@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
   <title>Still Insane</title>
 
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -18,11 +19,16 @@
   <audio id="menuMusic" src="assets/game-ambient.mp3" loop preload="auto"></audio>
 
   <main class="menu-screen">
+
+    <!-- REAL MOVING BACKGROUND LAYER -->
     <div class="moving-bg"></div>
+
+    <!-- FX LAYERS -->
     <div class="rain"></div>
     <div class="fog"></div>
     <div class="dark-vignette"></div>
 
+    <!-- MENU -->
     <section class="menu-content">
       <div class="menu-buttons">
         <button class="menu-btn play-btn" onclick="playGame()">PLAY</button>
@@ -30,6 +36,7 @@
         <button class="menu-btn" onclick="openReadMe()">READ ME</button>
       </div>
     </section>
+
   </main>
 
   <script src="script.js"></script>
