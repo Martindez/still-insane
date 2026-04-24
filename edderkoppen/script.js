@@ -71,10 +71,6 @@ const ui = {
 
 ui.restartBtn.addEventListener("click", startGame);
 
-ui.nextLevelBtn.addEventListener("click", () => {
-  window.location.href = "../pizzaria/";
-});
-
 ui.menuBtn.addEventListener("click", () => {
   window.location.href = "../";
 });
@@ -165,7 +161,10 @@ function startGame() {
   ui.endScreen.classList.add("hidden");
   ui.hud.classList.remove("hidden");
   ui.gameWrap.classList.remove("hidden");
-  ui.nextLevelBtn.classList.add("hidden");
+
+  if (ui.nextLevelBtn) {
+    ui.nextLevelBtn.classList.add("hidden");
+  }
 
   showMessage("Find all 4 keys, then escape through Gangen.");
   updateUI();
@@ -229,12 +228,15 @@ function checkWin() {
     gameState.gameStarted = false;
     stopAmbientMusic();
 
-    ui.endTitle.textContent = "You Escaped!";
-    ui.endText.textContent = "You escaped Edderkoppen.";
-    ui.nextLevelBtn.classList.remove("hidden");
+    ui.endTitle.textContent = "YOU SURVIVED!";
+    ui.endText.textContent = "You escaped all 3 levels of Still Insane!";
     ui.hud.classList.add("hidden");
     ui.gameWrap.classList.add("hidden");
     ui.endScreen.classList.remove("hidden");
+
+    if (ui.nextLevelBtn) {
+      ui.nextLevelBtn.classList.add("hidden");
+    }
 
     playTone(523, 0.12, "triangle", 0.05);
     setTimeout(() => playTone(659, 0.12, "triangle", 0.05), 120);
@@ -248,9 +250,12 @@ function loseGame() {
 
   ui.endTitle.textContent = "Caught!";
   ui.endText.textContent = "The killer found you.";
-  ui.nextLevelBtn.classList.add("hidden");
   ui.hud.classList.add("hidden");
   ui.gameWrap.classList.add("hidden");
+
+  if (ui.nextLevelBtn) {
+    ui.nextLevelBtn.classList.add("hidden");
+  }
 
   setTimeout(() => {
     ui.endScreen.classList.remove("hidden");
@@ -262,7 +267,8 @@ function updateUI() {
   ui.hearts.textContent = gameState.hearts > 0 ? "❤️" : "💔";
   ui.playerRoom.textContent = gameState.playerRoom;
   ui.killerRoom.textContent = gameState.killerRoom;
-  ui.exitState.textContent = gameState.collectedKeys.length >= totalKeys ? "Open" : "Locked";
+  ui.exitState.textContent =
+    gameState.collectedKeys.length >= totalKeys ? "Open" : "Locked";
 
   moveToken(ui.playerToken, gameState.playerRoom);
   moveToken(ui.killerToken, gameState.killerRoom);
