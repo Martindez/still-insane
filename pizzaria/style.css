@@ -116,15 +116,18 @@ body {
   border-radius: 999px;
 }
 
-.room-hotspot.kitchen { top: 12%; left: 16%; width: 13%; height: 10%; }
-.room-hotspot.storage { top: 12%; left: 50%; width: 14%; height: 10%; }
-.room-hotspot.staff { top: 12%; left: 84%; width: 13%; height: 10%; }
-.room-hotspot.arcade { top: 45%; left: 16%; width: 13%; height: 10%; }
-.room-hotspot.dining { top: 45%; left: 50%; width: 15%; height: 11%; }
-.room-hotspot.bath { top: 45%; left: 84%; width: 13%; height: 10%; }
-.room-hotspot.delivery { top: 82%; left: 16%; width: 13%; height: 10%; }
-.room-hotspot.oven { top: 82%; left: 50%; width: 14%; height: 10%; }
-.room-hotspot.exit-room { top: 82%; left: 84%; width: 12%; height: 10%; }
+/* Centered hotspots */
+.room-hotspot.kitchen { top: 14%; left: 16%; width: 14%; height: 12%; }
+.room-hotspot.storage { top: 14%; left: 50%; width: 15%; height: 12%; }
+.room-hotspot.staff { top: 14%; left: 84%; width: 14%; height: 12%; }
+
+.room-hotspot.arcade { top: 46%; left: 16%; width: 14%; height: 12%; }
+.room-hotspot.dining { top: 46%; left: 50%; width: 16%; height: 13%; }
+.room-hotspot.bath { top: 46%; left: 84%; width: 14%; height: 12%; }
+
+.room-hotspot.delivery { top: 82%; left: 16%; width: 14%; height: 12%; }
+.room-hotspot.oven { top: 82%; left: 50%; width: 15%; height: 12%; }
+.room-hotspot.exit-room { top: 82%; left: 84%; width: 13%; height: 11%; }
 
 .room-ring {
   position: absolute;
@@ -140,12 +143,15 @@ body {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
 }
 
-.kitchen-ring { top: 12%; left: 16%; }
-.storage-ring { top: 12%; left: 50%; }
-.staff-ring { top: 12%; left: 84%; }
-.arcade-ring { top: 45%; left: 16%; }
-.dining-ring { top: 45%; left: 50%; }
-.bath-ring { top: 45%; left: 84%; }
+/* Centered dots */
+.kitchen-ring { top: 14%; left: 16%; }
+.storage-ring { top: 14%; left: 50%; }
+.staff-ring { top: 14%; left: 84%; }
+
+.arcade-ring { top: 46%; left: 16%; }
+.dining-ring { top: 46%; left: 50%; }
+.bath-ring { top: 46%; left: 84%; }
+
 .delivery-ring { top: 82%; left: 16%; }
 .oven-ring { top: 82%; left: 50%; }
 .exit-ring { top: 82%; left: 84%; }
