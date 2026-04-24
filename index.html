@@ -8,18 +8,24 @@
 </head>
 <body>
   <main class="menu">
-    <section class="menu-box">
-      <h1>Rabbit Escape</h1>
-      <p>Run. Hide. Find the keys.</p>
-
-      <button id="playBtn" class="play-btn">Play Game</button>
-      <button id="viewBgBtn" class="small-btn">View Background</button>
+    <section class="menu-panel">
+      <button id="playBtn" class="menu-btn play">Play Game</button>
+      <button id="readBtn" class="menu-btn read">Read Me</button>
     </section>
 
-    <div id="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Entering school...</p>
-    </div>
+    <section id="readPanel" class="read-panel" aria-hidden="true">
+      <div class="read-card">
+        <h2>Read Me</h2>
+        <p>Find the keys, move room to room, and escape before the killer rabbit catches you.</p>
+        <p>Click rooms to move. Watch your danger bar. Use your chances wisely.</p>
+        <button id="closeReadBtn" class="close-btn">Close</button>
+      </div>
+    </section>
+
+    <section id="loading" class="loading" aria-hidden="true">
+      <div class="loader"></div>
+      <p>Entering the school...</p>
+    </section>
   </main>
 
   <script src="./script.js"></script>
