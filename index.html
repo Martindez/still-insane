@@ -2,22 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
   <title>Still Insane</title>
+
+  <!-- iPhone App Mode -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Still Insane" />
+
+  <!-- Icon -->
+  <link rel="apple-touch-icon" href="assets/killer.png" />
+  <link rel="icon" href="assets/killer.png" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <audio id="menuMusic" src="assets/game-ambient.mp3" loop preload="auto"></audio>
 
-  <main class="menu-screen" onclick="unlockAudio()">
-    <div class="menu-buttons">
-      <button onclick="playGame()">PLAY</button>
-      <button onclick="toggleMute()" id="muteBtn">MUTE</button>
-      <button onclick="openReadMe()">READ ME</button>
+  <main class="menu-screen">
+    <div class="menu-overlay">
+
+      <div class="menu-buttons">
+        <button class="menu-btn" onclick="playGame()">PLAY</button>
+        <button class="menu-btn" id="muteBtn" onclick="toggleMute()">MUTE</button>
+        <button class="menu-btn" onclick="openReadMe()">READ ME</button>
+      </div>
+
     </div>
-
-    <audio id="menuMusic" loop autoplay muted>
-      <source src="assets/game-ambient.mp3" type="audio/mpeg" />
-    </audio>
   </main>
 
   <script src="script.js"></script>
