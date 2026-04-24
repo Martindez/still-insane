@@ -10,16 +10,17 @@ const rooms = {
   Exit: ["Bath", "Oven"]
 };
 
+/* Centered positions for player, killer, keys, and flashlight */
 const roomPositions = {
-  Kitchen: { top: 16, left: 16 },
-  Storage: { top: 16, left: 50 },
-  Staff: { top: 16, left: 84 },
-  Arcade: { top: 48, left: 16 },
-  Dining: { top: 48, left: 50 },
-  Bath: { top: 48, left: 84 },
-  Delivery: { top: 82, left: 16 },
-  Oven: { top: 82, left: 50 },
-  Exit: { top: 82, left: 84 }
+  Kitchen: { top: 18, left: 18 },
+  Storage: { top: 18, left: 50 },
+  Staff: { top: 18, left: 82 },
+  Arcade: { top: 49, left: 18 },
+  Dining: { top: 49, left: 50 },
+  Bath: { top: 49, left: 82 },
+  Delivery: { top: 80, left: 18 },
+  Oven: { top: 80, left: 50 },
+  Exit: { top: 80, left: 82 }
 };
 
 const possibleKeyRooms = [
@@ -271,7 +272,7 @@ function drawKeys() {
     const pos = roomPositions[room];
     const key = document.createElement("div");
     key.className = "map-key";
-    key.style.top = `${pos.top + 6}%`;
+    key.style.top = `${pos.top + 5}%`;
     key.style.left = `${pos.left + 5}%`;
     ui.keyLayer.appendChild(key);
   });
