@@ -116,76 +116,168 @@ body {
   border-radius: 999px;
 }
 
-/* Centered hotspots */
-.room-hotspot.kitchen { top: 14%; left: 16%; width: 14%; height: 12%; }
-.room-hotspot.storage { top: 14%; left: 50%; width: 15%; height: 12%; }
-.room-hotspot.staff { top: 14%; left: 84%; width: 14%; height: 12%; }
+/* Invisible clickable areas over the room labels */
+.room-hotspot.kitchen {
+  top: 16%;
+  left: 27%;
+  width: 14%;
+  height: 9%;
+}
 
-.room-hotspot.arcade { top: 46%; left: 16%; width: 14%; height: 12%; }
-.room-hotspot.dining { top: 46%; left: 50%; width: 16%; height: 13%; }
-.room-hotspot.bath { top: 46%; left: 84%; width: 14%; height: 12%; }
+.room-hotspot.storage {
+  top: 16%;
+  left: 51%;
+  width: 15%;
+  height: 9%;
+}
 
-.room-hotspot.delivery { top: 82%; left: 16%; width: 14%; height: 12%; }
-.room-hotspot.oven { top: 82%; left: 50%; width: 15%; height: 12%; }
-.room-hotspot.exit-room { top: 82%; left: 84%; width: 13%; height: 11%; }
+.room-hotspot.staff {
+  top: 16%;
+  left: 75%;
+  width: 14%;
+  height: 9%;
+}
+
+.room-hotspot.arcade {
+  top: 47%;
+  left: 27%;
+  width: 14%;
+  height: 9%;
+}
+
+.room-hotspot.dining {
+  top: 47%;
+  left: 50%;
+  width: 15%;
+  height: 9%;
+}
+
+.room-hotspot.bath {
+  top: 47%;
+  left: 75%;
+  width: 14%;
+  height: 9%;
+}
+
+.room-hotspot.delivery {
+  top: 82%;
+  left: 28%;
+  width: 14%;
+  height: 9%;
+}
+
+.room-hotspot.oven {
+  top: 82%;
+  left: 50%;
+  width: 14%;
+  height: 9%;
+}
+
+.room-hotspot.exit-room {
+  top: 82%;
+  left: 74%;
+  width: 13%;
+  height: 9%;
+}
 
 .room-ring {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 18px !important;
-  height: 18px !important;
+  width: 16px !important;
+  height: 16px !important;
   border-radius: 999px;
   pointer-events: none;
-  z-index: 4;
+  z-index: 6;
   opacity: 0;
   border: 2px solid rgba(255, 255, 255, 0.75);
   background: rgba(255, 255, 255, 0.12);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
 }
 
-/* Centered dots */
-.kitchen-ring { top: 14%; left: 16%; }
-.storage-ring { top: 14%; left: 50%; }
-.staff-ring { top: 14%; left: 84%; }
+/* These dots sit on top of the yellow circles in the map image */
+.kitchen-ring {
+  top: 16%;
+  left: 24.7%;
+}
 
-.arcade-ring { top: 46%; left: 16%; }
-.dining-ring { top: 46%; left: 50%; }
-.bath-ring { top: 46%; left: 84%; }
+.storage-ring {
+  top: 16%;
+  left: 47%;
+}
 
-.delivery-ring { top: 82%; left: 16%; }
-.oven-ring { top: 82%; left: 50%; }
-.exit-ring { top: 82%; left: 84%; }
+.staff-ring {
+  top: 16%;
+  left: 70.5%;
+}
+
+.arcade-ring {
+  top: 47%;
+  left: 24.2%;
+}
+
+.dining-ring {
+  top: 47%;
+  left: 47%;
+}
+
+.bath-ring {
+  top: 47%;
+  left: 70.8%;
+}
+
+.delivery-ring {
+  top: 82%;
+  left: 25.2%;
+}
+
+.oven-ring {
+  top: 82%;
+  left: 47.3%;
+}
+
+.exit-ring {
+  top: 82%;
+  left: 70.7%;
+}
 
 .room-ring.connected {
   opacity: 1;
-  border-color: rgba(80, 255, 130, 0.75);
-  background: rgba(80, 255, 130, 0.18);
-  box-shadow: 0 0 10px rgba(80, 255, 130, 0.7), 0 0 24px rgba(80, 255, 130, 0.25);
+  border-color: rgba(80, 255, 130, 0.9);
+  background: rgba(80, 255, 130, 0.2);
+  box-shadow:
+    0 0 8px rgba(80, 255, 130, 0.85),
+    0 0 20px rgba(80, 255, 130, 0.35);
 }
 
 .room-ring.current {
   opacity: 1;
-  width: 22px !important;
-  height: 22px !important;
-  border-color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 28px rgba(255, 255, 255, 0.25);
+  width: 20px !important;
+  height: 20px !important;
+  border-color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.9),
+    0 0 24px rgba(255, 255, 255, 0.35);
 }
 
 .room-ring.killer-room {
   opacity: 1;
-  width: 22px !important;
-  height: 22px !important;
-  border-color: rgba(255, 45, 55, 0.9);
-  background: rgba(255, 45, 55, 0.24);
-  box-shadow: 0 0 12px rgba(255, 45, 55, 0.85), 0 0 30px rgba(255, 45, 55, 0.35);
+  width: 20px !important;
+  height: 20px !important;
+  border-color: rgba(255, 45, 55, 0.95);
+  background: rgba(255, 45, 55, 0.25);
+  box-shadow:
+    0 0 10px rgba(255, 45, 55, 0.9),
+    0 0 26px rgba(255, 45, 55, 0.4);
 }
 
 .room-ring.exit-open {
   opacity: 1;
   border-color: rgba(90, 255, 120, 0.95);
   background: rgba(90, 255, 120, 0.25);
-  box-shadow: 0 0 14px rgba(90, 255, 120, 0.9), 0 0 35px rgba(90, 255, 120, 0.35);
+  box-shadow:
+    0 0 12px rgba(90, 255, 120, 0.9),
+    0 0 28px rgba(90, 255, 120, 0.35);
 }
 
 .key-layer {
@@ -198,8 +290,8 @@ body {
 .map-key {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: clamp(12px, 2.2vw, 20px);
-  height: clamp(12px, 2.2vw, 20px);
+  width: clamp(14px, 2.4vw, 24px);
+  height: clamp(14px, 2.4vw, 24px);
   border-radius: 50%;
   background: radial-gradient(circle, #fff7a8, #ffd13b, #9b6500);
   box-shadow: 0 0 12px #ffd13b, 0 0 24px #ffd13b;
@@ -208,10 +300,10 @@ body {
 
 .token {
   position: absolute;
-  width: clamp(36px, 7vw, 66px);
-  height: clamp(36px, 7vw, 66px);
+  width: clamp(58px, 9vw, 95px);
+  height: clamp(58px, 9vw, 95px);
   object-fit: contain;
-  transform: translate(-50%, -80%);
+  transform: translate(-50%, -86%);
   z-index: 7;
   pointer-events: none;
   filter: drop-shadow(0 8px 8px black);
@@ -261,18 +353,34 @@ body {
 }
 
 @keyframes pulse {
-  from { transform: translate(-50%, -50%) scale(1); }
-  to { transform: translate(-50%, -50%) scale(1.25); }
+  from {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.25);
+  }
 }
 
 @keyframes flash {
-  0%, 100% { opacity: 0; }
-  40% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
 }
 
 @keyframes scare {
-  from { transform: scale(1); }
-  to { transform: scale(1.08); }
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.08);
+  }
 }
 
 @media (max-width: 700px) {
@@ -299,13 +407,18 @@ body {
   }
 
   .room-ring {
-    width: 14px !important;
-    height: 14px !important;
+    width: 13px !important;
+    height: 13px !important;
   }
 
   .room-ring.current,
   .room-ring.killer-room {
-    width: 18px !important;
-    height: 18px !important;
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .token {
+    width: clamp(48px, 12vw, 78px);
+    height: clamp(48px, 12vw, 78px);
   }
 }
