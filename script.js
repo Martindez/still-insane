@@ -1,4 +1,4 @@
-const menuMusic = document.getElementById("menuMusic");
+const ambientMusic = document.getElementById("ambientMusic");
 const playBtn = document.getElementById("playBtn");
 const readBtn = document.getElementById("readBtn");
 const muteBtn = document.getElementById("muteBtn");
@@ -8,40 +8,46 @@ const closeReadBtn = document.getElementById("closeReadBtn");
 let muted = localStorage.getItem("rabbitEscapeMuted") === "true";
 let musicStarted = false;
 
-menuMusic.volume = 0.5;
-menuMusic.muted = muted;
+ambientMusic.volume = 0.35;
+ambientMusic.muted = muted;
 
 function updateMuteButton() {
   muteBtn.textContent = muted ? "Unmute" : "Mute";
 }
 
-function startMusic() {
+function startAmbientMusic() {
   if (muted || musicStarted) return;
 
-  menuMusic.play()
+  ambientMusic.play()
     .then(() => {
       musicStarted = true;
+      localStorage.setItem("rabbitEscapeAudioUnlocked", "true");
     })
     .catch(() => {});
 }
 
 function toggleMute() {
   muted = !muted;
-  menuMusic.muted = muted;
+  ambientMusic.muted = muted;
+
   localStorage.setItem("rabbitEscapeMuted", muted);
 
   if (muted) {
-    menuMusic.pause();
+    ambientMusic.pause();
     musicStarted = false;
   } else {
-    startMusic();
+    startAmbientMusic();
   }
 
   updateMuteButton();
 }
 
 function startGame() {
-  window.location.href = "./school/";
+  startAmbientMusic();
+
+  setTimeout(() => {
+    window.location.href = "./school/";
+  }, 250);
 }
 
 function openReadMe() {
@@ -52,8 +58,8 @@ function closeReadMe() {
   readPanel.classList.remove("show");
 }
 
-document.addEventListener("click", startMusic);
-document.addEventListener("touchstart", startMusic);
+document.addEventListener("click", startAmbientMusic);
+document.addEventListener("touchstart", startAmbientMusic);
 
 playBtn.addEventListener("click", startGame);
 readBtn.addEventListener("click", openReadMe);
