@@ -108,34 +108,35 @@ body {
 
 .player-light {
   position: absolute;
-  width: 250px;
-  height: 250px;
+  width: 210px;
+  height: 210px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   z-index: 4;
   pointer-events: none;
   background: radial-gradient(
     circle,
-    rgba(255, 235, 150, 0.42) 0%,
-    rgba(255, 210, 80, 0.22) 28%,
-    rgba(255, 190, 40, 0.08) 52%,
-    rgba(255, 190, 40, 0) 75%
+    rgba(255, 240, 175, 0.5) 0%,
+    rgba(255, 220, 95, 0.28) 30%,
+    rgba(255, 180, 40, 0.1) 55%,
+    rgba(255, 180, 40, 0) 76%
   );
   filter: blur(2px);
   mix-blend-mode: screen;
   transition: top 0.25s ease, left 0.25s ease;
-  animation: flashlightPulse 2.4s infinite alternate;
+  animation: flashlightPulse 2.2s infinite alternate;
 }
 
 .room-hotspot {
   position: absolute;
   border: 0;
-  background: transparent;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
   cursor: pointer;
   z-index: 10;
 }
 
-/* Big invisible clickable rooms */
 .room-hotspot.electrical {
   top: 5%;
   left: 5%;
@@ -178,7 +179,6 @@ body {
   height: 18%;
 }
 
-/* No visible room boxes/circles */
 .room-ring {
   display: none !important;
 }
@@ -203,18 +203,37 @@ body {
 
 .token {
   position: absolute;
-  width: clamp(52px, 8vw, 86px);
-  height: clamp(52px, 8vw, 86px);
   object-fit: contain;
-  transform: translate(-50%, -82%);
-  z-index: 7;
   pointer-events: none;
-  filter: drop-shadow(0 8px 8px black);
   transition: top 0.25s ease, left 0.25s ease;
 }
 
+.player-token {
+  width: clamp(68px, 10vw, 112px);
+  height: clamp(68px, 10vw, 112px);
+  transform: translate(-50%, -82%);
+  z-index: 8;
+  filter:
+    drop-shadow(0 0 10px rgba(255, 235, 150, 0.9))
+    drop-shadow(0 10px 10px black);
+}
+
 .killer-token {
-  z-index: 7;
+  width: clamp(82px, 12vw, 138px);
+  height: clamp(82px, 12vw, 138px);
+  transform: translate(-50%, -86%);
+  z-index: 9;
+  filter:
+    drop-shadow(0 0 12px rgba(255, 0, 0, 0.95))
+    drop-shadow(0 12px 12px black);
+}
+
+.token.moving {
+  animation: movePop 0.26s ease;
+}
+
+.killer-token.moving {
+  animation: killerMovePop 0.3s ease;
 }
 
 .flash-overlay {
@@ -264,6 +283,34 @@ body {
   to {
     opacity: 0.95;
     transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+@keyframes movePop {
+  0% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 1.12;
+  }
+
+  100% {
+    scale: 1;
+  }
+}
+
+@keyframes killerMovePop {
+  0% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 1.16;
+  }
+
+  100% {
+    scale: 1;
   }
 }
 
@@ -321,13 +368,18 @@ body {
     font-size: 16px;
   }
 
-  .token {
-    width: clamp(46px, 11vw, 74px);
-    height: clamp(46px, 11vw, 74px);
+  .player-token {
+    width: clamp(58px, 13vw, 88px);
+    height: clamp(58px, 13vw, 88px);
+  }
+
+  .killer-token {
+    width: clamp(70px, 15vw, 104px);
+    height: clamp(70px, 15vw, 104px);
   }
 
   .player-light {
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
   }
 }

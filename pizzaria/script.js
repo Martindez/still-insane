@@ -69,8 +69,7 @@ const ui = {
   flashOverlay: document.getElementById("flashOverlay"),
   jumpscareOverlay: document.getElementById("jumpscareOverlay"),
   mapBoard: document.querySelector(".map-board"),
-  roomButtons: document.querySelectorAll(".room-hotspot"),
-  roomRings: document.querySelectorAll(".room-ring")
+  roomButtons: document.querySelectorAll(".room-hotspot")
 };
 
 ui.startBtn.addEventListener("click", startGame);
@@ -246,6 +245,13 @@ function moveToken(token, room) {
   const pos = roomPositions[room];
   token.style.top = `${pos.top}%`;
   token.style.left = `${pos.left}%`;
+  animateToken(token);
+}
+
+function animateToken(token) {
+  token.classList.remove("moving");
+  void token.offsetWidth;
+  token.classList.add("moving");
 }
 
 function moveLight(room) {
