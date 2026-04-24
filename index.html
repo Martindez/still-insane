@@ -3,33 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rabbit Escape</title>
-  <link rel="stylesheet" href="./style.css" />
+  <title>Still Insane</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <audio id="ambientMusic" src="./assets/game-ambient.mp3" loop preload="auto"></audio>
 
-  <div class="bg"></div>
-  <div class="darkness"></div>
+  <main class="menu-screen">
+    <div class="menu-buttons">
+      <button onclick="playGame()">PLAY</button>
+      <button onclick="toggleMute()" id="muteBtn">MUTE</button>
+      <button onclick="openReadMe()">READ ME</button>
+    </div>
 
-  <main class="menu">
-    <section class="menu-panel">
-      <button id="playBtn" class="menu-btn" type="button">Play</button>
-      <button id="readBtn" class="menu-btn" type="button">Read me</button>
-      <button id="muteBtn" class="menu-btn" type="button">Mute</button>
-    </section>
-
-    <section id="readPanel" class="read-panel">
-      <div class="read-card">
-        <button id="closeReadBtn" class="close-btn" type="button">×</button>
-        <h2>Read me</h2>
-        <p>The rabbit is hunting you.</p>
-        <p>Find the keys, move room to room, and escape before it catches you.</p>
-        <p>Good luck.</p>
-      </div>
-    </section>
+    <audio id="menuMusic" src="assets/game-ambient.mp3" loop autoplay></audio>
   </main>
 
-  <script src="./script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

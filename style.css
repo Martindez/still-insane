@@ -1,139 +1,66 @@
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-html,
 body {
-  margin: 0;
-  width: 100%;
-  min-height: 100%;
-}
-
-body {
-  min-height: 100vh;
-  min-height: 100dvh;
   overflow: hidden;
-  font-family: Arial, Helvetica, sans-serif;
-  color: white;
-  background: #020306;
+  font-family: Arial, sans-serif;
+  background: black;
 }
 
-.bg {
-  position: fixed;
-  inset: 0;
-  background-image: url("./assets/menu-bg-clean.jpg");
-  background-size: contain;
+.menu-screen {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("assets/menu-bg-clean.jpg");
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #020306;
-  z-index: 0;
-}
-
-.darkness {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: rgba(0, 0, 0, 0.18);
-}
-
-.menu {
   position: relative;
-  z-index: 2;
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: grid;
-  place-items: end center;
-  padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
-.menu-panel {
-  width: min(380px, 84vw);
-  display: grid;
-  gap: 13px;
-}
-
-.menu-btn {
-  min-height: 56px;
-  border-radius: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.45);
-  background: rgba(10, 10, 15, 0.78);
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  text-shadow: 0 3px 10px black;
-}
-
-.menu-btn:hover {
-  transform: scale(1.04);
-  background: rgba(150, 0, 20, 0.9);
-}
-
-.read-panel {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  display: none;
-  place-items: center;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.75);
-}
-
-.read-panel.show {
-  display: grid;
-}
-
-.read-card {
-  position: relative;
-  width: min(520px, 90vw);
-  max-height: 85dvh;
-  overflow-y: auto;
-  padding: 34px 28px;
-  text-align: center;
-  border-radius: 24px;
-  background: rgba(10, 10, 15, 0.96);
-  border: 2px solid rgba(255, 60, 75, 0.5);
-}
-
-.read-card h2 {
-  margin: 0 0 18px;
-  color: #ff3147;
-  font-size: 2.4rem;
-  text-transform: uppercase;
-}
-
-.read-card p {
-  margin: 12px 0;
-  font-size: 1.05rem;
-  line-height: 1.5;
-  font-weight: 700;
-}
-
-.close-btn {
+/* Buttons placed under the title area */
+.menu-buttons {
   position: absolute;
-  top: 12px;
-  right: 14px;
-  width: 38px;
-  height: 38px;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
+  left: 50%;
+  top: 70%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
 }
 
-@media (max-width: 700px) {
-  .menu-panel {
-    width: 82vw;
-    gap: 10px;
+.menu-buttons button {
+  width: 250px;
+  padding: 14px 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  border: 2px solid rgba(180, 0, 0, 0.8);
+  border-radius: 6px;
+  font-size: 22px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  text-shadow: 0 0 8px red;
+  box-shadow: 0 0 12px rgba(180, 0, 0, 0.35);
+  transition: 0.2s;
+}
+
+.menu-buttons button:hover {
+  background: rgba(120, 0, 0, 0.75);
+  transform: scale(1.05);
+  box-shadow: 0 0 22px rgba(255, 0, 0, 0.7);
+}
+
+/* Makes it work better on small screens */
+@media (max-width: 800px) {
+  .menu-buttons {
+    top: 68%;
   }
 
-  .menu-btn {
-    min-height: 48px;
-    font-size: 0.95rem;
+  .menu-buttons button {
+    width: 210px;
+    font-size: 18px;
   }
 }
