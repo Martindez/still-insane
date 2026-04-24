@@ -7,12 +7,31 @@
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <main class="menu">
-    <section class="title-box">
-      <p>Rabbit Escape</p>
-      <h1>RABBIT<br>ESCAPE</h1>
-      <a href="./school/" class="play-button">PLAY GAME</a>
+  <div class="menu-fade"></div>
+  <div class="rain-glow"></div>
+
+  <main class="menu-screen">
+    <section class="menu-card">
+      <h1 class="game-title">
+        <span>Rabbit</span>
+        <span>Escape</span>
+      </h1>
+
+      <button id="playButton" class="play-button" type="button">
+        Play Game
+      </button>
+
+      <p id="menuHint" class="menu-hint">Click play to enter the school.</p>
     </section>
   </main>
+
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-box">
+      <div class="loader"></div>
+      <p>Entering the school...</p>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
 </body>
 </html>

@@ -1,36 +1,29 @@
 (function () {
-  const body = document.body;
-  const ambientToggle = document.getElementById("ambientToggle");
-  const STORAGE_KEY = "rabbitEscapeMenuAmbient";
+  const playButton = document.getElementById("playButton");
+  const loadingScreen = document.getElementById("loadingScreen");
+  const menuHint = document.getElementById("menuHint");
 
-  function getSavedAmbient() {
-    try {
-      return localStorage.getItem(STORAGE_KEY) !== "off";
-    } catch {
-      return true;
-    }
-  }
+  function startGame() {
+    if (!playButton) return;
 
-  function setAmbient(isOn) {
-    body.classList.toggle("ambient-off", !isOn);
+    playButton.disabled = true;
+    playButton.textContent = "Loading...";
+    if (menuHint) menuHint.textContent = "Do not let the rabbit catch you.";
 
-    if (ambientToggle) {
-      ambientToggle.textContent = isOn ? "Ambient: ON" : "Ambient: OFF";
-      ambientToggle.classList.toggle("off", !isOn);
+    if (loadingScreen) {
+      loadingScreen.classList.add("show");
     }
 
-    try {
-      localStorage.setItem(STORAGE_KEY, isOn ? "on" : "off");
-    } catch {}
+    setTimeout(() => {
+      window.location.href = "./school/";
+    }, 650);
   }
 
-  ambientToggle?.addEventListener("click", () => {
-    setAmbient(body.classList.contains("ambient-off"));
-  });
+  playButton?.addEventListener("click", startGame);
 
-  document.querySelector(".level-3")?.addEventListener("click", () => {
-    alert("Level 3 is coming soon!");
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      startGame();
+    }
   });
-
-  setAmbient(getSavedAmbient());
 })();
