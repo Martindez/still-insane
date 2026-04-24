@@ -3,19 +3,22 @@ const muteBtn = document.getElementById("muteBtn");
 
 let musicStarted = false;
 
-document.addEventListener("pointerdown", startMusicOnce, { once: true });
+document.addEventListener("pointerdown", startMusicOnce);
+document.addEventListener("click", startMusicOnce);
+document.addEventListener("touchstart", startMusicOnce);
 
 function startMusicOnce() {
-  if (musicStarted) return;
-
   const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
 
   if (!menuMusic || muted) return;
 
   musicStarted = true;
-  menuMusic.volume = 0.35;
   menuMusic.muted = false;
-  menuMusic.play().catch(() => {});
+  menuMusic.volume = 0.35;
+
+  menuMusic.play().catch((err) => {
+    console.log("Menu music blocked until interaction:", err);
+  });
 }
 
 function playGame() {
@@ -27,8 +30,8 @@ function playGame() {
 }
 
 function toggleMute() {
-  const currentlyMuted = localStorage.getItem("rabbitEscapeMuted") === "true";
-  const newMutedState = !currentlyMuted;
+  const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
+  const newMutedState = !muted;
 
   localStorage.setItem("rabbitEscapeMuted", String(newMutedState));
 
@@ -43,7 +46,9 @@ function toggleMute() {
     if (menuMusic) {
       menuMusic.muted = false;
       menuMusic.volume = 0.35;
-      menuMusic.play().catch(() => {});
+      menuMusic.play().catch((err) => {
+        console.log("Music blocked:", err);
+      });
     }
 
     if (muteBtn) muteBtn.textContent = "MUTE";
@@ -53,25 +58,18 @@ function toggleMute() {
 function loadMuteState() {
   const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
 
-  if (!muteBtn) return;
+  if (muteBtn) {
+    muteBtn.textContent = muted ? "UNMUTE" : "MUTE";
+  }
 
-  if (muted) {
-    muteBtn.textContent = "UNMUTE";
-
-    if (menuMusic) {
-      menuMusic.pause();
-      menuMusic.muted = true;
-    }
-  } else {
-    muteBtn.textContent = "MUTE";
-
-    if (menuMusic) {
-      menuMusic.muted = false;
-    }
+  if (menuMusic) {
+    menuMusic.muted = muted;
   }
 }
 
 function openReadMe() {
+  startMusicOnce();
+
   if (document.getElementById("readmeOverlay")) return;
 
   const overlay = document.createElement("div");
@@ -119,10 +117,7 @@ function openReadMe() {
 
 function closeReadMe() {
   const overlay = document.getElementById("readmeOverlay");
-
-  if (overlay) {
-    overlay.remove();
-  }
+  if (overlay) overlay.remove();
 }
 
 loadMuteState();
