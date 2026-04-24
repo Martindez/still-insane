@@ -11,26 +11,26 @@ const rooms = {
 };
 
 const roomPositions = {
-  "Bell Tower": { top: 15, left: 50 },
-  Storage: { top: 40, left: 25 },
-  "Main Hall": { top: 42, left: 50 },
-  Confession: { top: 40, left: 75 },
-  Altar: { top: 61, left: 50 },
+  "Bell Tower": { top: 18, left: 50 },
+  Storage: { top: 39, left: 25 },
+  "Main Hall": { top: 43, left: 50 },
+  Confession: { top: 39, left: 75 },
+  Altar: { top: 62, left: 50 },
   Entrance: { top: 76, left: 25 },
   Basement: { top: 79, left: 50 },
   Graveyard: { top: 75, left: 76 },
-  Exit: { top: 90, left: 50 }
+  Exit: { top: 91, left: 50 }
 };
 
 const secretWord = "INSANE";
 
 const relicRooms = [
   "Bell Tower",
-  Storage,
+  "Storage",
   "Main Hall",
-  Confession,
-  Altar,
-  Graveyard
+  "Confession",
+  "Altar",
+  "Graveyard"
 ];
 
 const relicLetters = {
@@ -78,7 +78,6 @@ const ui = {
   endText: document.getElementById("endText"),
   playerToken: document.getElementById("playerToken"),
   killerToken: document.getElementById("killerToken"),
-  keyLayer: document.getElementById("keyLayer"),
   flashOverlay: document.getElementById("flashOverlay"),
   jumpscareOverlay: document.getElementById("jumpscareOverlay"),
   mapBoard: document.querySelector(".map-board"),
@@ -91,17 +90,25 @@ const ui = {
   codeHint: document.getElementById("codeHint")
 };
 
-ui.restartBtn.addEventListener("click", startGame);
+if (ui.restartBtn) {
+  ui.restartBtn.addEventListener("click", startGame);
+}
 
-ui.menuBtn.addEventListener("click", () => {
-  window.location.href = "../";
-});
+if (ui.menuBtn) {
+  ui.menuBtn.addEventListener("click", () => {
+    window.location.href = "../";
+  });
+}
 
-ui.submitCodeBtn.addEventListener("click", submitExitCode);
+if (ui.submitCodeBtn) {
+  ui.submitCodeBtn.addEventListener("click", submitExitCode);
+}
 
-ui.codeInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") submitExitCode();
-});
+if (ui.codeInput) {
+  ui.codeInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") submitExitCode();
+  });
+}
 
 ui.roomButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -137,7 +144,7 @@ function playJumpscareSound() {
 }
 
 function createPlayerLight() {
-  if (playerLight) return;
+  if (playerLight || !ui.mapBoard) return;
 
   playerLight = document.createElement("div");
   playerLight.className = "player-light";
@@ -191,10 +198,10 @@ function startGame() {
     gameStarted: true
   };
 
-  ui.codeOverlay.classList.add("hidden");
-  ui.endScreen.classList.add("hidden");
-  ui.hud.classList.remove("hidden");
-  ui.gameWrap.classList.remove("hidden");
+  if (ui.codeOverlay) ui.codeOverlay.classList.add("hidden");
+  if (ui.endScreen) ui.endScreen.classList.add("hidden");
+  if (ui.hud) ui.hud.classList.remove("hidden");
+  if (ui.gameWrap) ui.gameWrap.classList.remove("hidden");
 
   showMessage("Collect the 6 cursed letters. The Exit will test you.");
   updateUI();
@@ -203,10 +210,15 @@ function startGame() {
 function movePlayer(room) {
   if (!gameState.gameStarted || gameState.exitChallengeStarted) return;
 
+  if (!rooms[room]) {
+    showMessage("That room does not exist.");
+    return;
+  }
+
   const connectedRooms = rooms[gameState.playerRoom];
 
-  if (!connectedRooms.includes(room)) {
-    showMessage("You can only move to connected rooms.");
+  if (!connectedRooms || !connectedRooms.includes(room)) {
+    showMessage(`You cannot move from ${gameState.playerRoom} to ${room}.`);
     playTone(130, 0.15, "square", 0.03);
     return;
   }
@@ -232,14 +244,17 @@ function movePlayer(room) {
 
   moveKillerSmart();
 
-  if (gameState.collectedRelics.length >= 4 && Math.random() < 0.35) {
+  if (gameState.collectedRelics.length >= 4 && Math.random() < 0.3) {
     moveKillerSmart();
     showMessage("The church bell rings. The killer moves again.");
   }
 
   checkDanger();
   updateUI();
-  dangerWarning();
+
+  if (gameState.gameStarted) {
+    dangerWarning();
+  }
 }
 
 function collectRelicIfNeeded() {
@@ -265,7 +280,7 @@ function startExitChallenge() {
   ui.codeHint.textContent = `Letters found: ${getRevealedWordDisplay()}`;
   ui.timerText.textContent = exitTimeLeft;
 
-  setTimeout(() => ui.codeInput.focus(), 100);
+  setTimeout(() => ui.codeInput.focus(), 150);
 
   playTone(90, 0.25, "sawtooth", 0.05);
 
@@ -302,9 +317,9 @@ function failExitChallenge(text) {
   setTimeout(() => {
     ui.codeOverlay.classList.add("hidden");
     gameState.killerRoom = "Exit";
+    gameState.playerRoom = "Exit";
     checkDanger();
-    loseGame();
-  }, 500);
+  }, 600);
 }
 
 function winGame() {
@@ -324,14 +339,17 @@ function winGame() {
 }
 
 function moveKillerSmart() {
-  const chaseChance = gameState.collectedRelics.length >= 3 ? 0.75 : 0.55;
+  const chaseChance = gameState.collectedRelics.length >= 3 ? 0.7 : 0.45;
   const path = findShortestPath(gameState.killerRoom, gameState.playerRoom);
 
   if (path.length > 1 && Math.random() < chaseChance) {
     gameState.killerRoom = path[1];
   } else {
     const options = rooms[gameState.killerRoom].filter((room) => room !== "Exit");
-    gameState.killerRoom = options[Math.floor(Math.random() * options.length)];
+
+    if (options.length > 0) {
+      gameState.killerRoom = options[Math.floor(Math.random() * options.length)];
+    }
   }
 }
 
@@ -357,9 +375,9 @@ function findShortestPath(start, target) {
 }
 
 function dangerWarning() {
-  const connected = rooms[gameState.playerRoom];
+  const connectedRooms = rooms[gameState.playerRoom];
 
-  if (connected.includes(gameState.killerRoom)) {
+  if (connectedRooms && connectedRooms.includes(gameState.killerRoom)) {
     showMessage("You hear breathing nearby...");
     playTone(90, 0.18, "sawtooth", 0.035);
   }
@@ -410,6 +428,8 @@ function getRevealedWordDisplay() {
 }
 
 function moveToken(token, room) {
+  if (!token || !roomPositions[room]) return;
+
   const pos = roomPositions[room];
 
   token.style.top = `${pos.top}%`;
@@ -425,7 +445,7 @@ function animateToken(token) {
 }
 
 function moveLight(room) {
-  if (!playerLight) return;
+  if (!playerLight || !roomPositions[room]) return;
 
   const pos = roomPositions[room];
 
