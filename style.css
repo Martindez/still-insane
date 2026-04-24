@@ -27,185 +27,79 @@ body {
 
 .moving-bg {
   position: absolute;
-  inset: -4%;
+  top: -4%;
+  left: -4%;
   width: 108%;
   height: 108%;
   object-fit: cover;
-  animation: slowZoom 12s ease-in-out infinite alternate;
   z-index: 1;
+  animation: slowZoom 12s ease-in-out infinite alternate;
 }
 
-.rain {
-  position: absolute;
-  inset: -100px;
-  background-image: repeating-linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0.18) 0px,
-    rgba(255, 255, 255, 0.18) 1px,
-    transparent 1px,
-    transparent 9px
-  );
-  opacity: 0.22;
-  animation: rainMove 0.35s linear infinite;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.fog {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 65%, rgba(255,255,255,0.12), transparent 35%),
-    radial-gradient(circle at 80% 35%, rgba(255,255,255,0.08), transparent 40%);
-  animation: fogMove 7s ease-in-out infinite alternate;
-  z-index: 4;
-  pointer-events: none;
-}
-
+.rain,
+.fog,
 .dark-vignette {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle, rgba(0,0,0,0.05), rgba(0,0,0,0.75)),
-    linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.65));
-  z-index: 5;
   pointer-events: none;
 }
 
+.rain {
+  z-index: 2;
+}
+
+.fog {
+  z-index: 3;
+}
+
+.dark-vignette {
+  z-index: 4;
+  background: rgba(0, 0, 0, 0.15);
+}
+
 .menu-content {
-  position: relative;
-  z-index: 10;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
 }
 
 .menu-buttons {
   position: absolute;
   left: 50%;
-  bottom: max(34px, env(safe-area-inset-bottom));
+  bottom: 34px;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   gap: 14px;
+  pointer-events: auto;
 }
 
 .menu-btn {
-  width: min(290px, 78vw);
+  width: 290px;
   padding: 15px 0;
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.75);
   color: white;
-  border: 1px solid rgba(255, 40, 40, 0.95);
+  border: 2px solid red;
   border-radius: 8px;
-  font-size: clamp(1rem, 3vw, 1.35rem);
+  font-size: 22px;
   font-weight: 900;
   letter-spacing: 5px;
   cursor: pointer;
   text-shadow: 0 0 10px red;
-  box-shadow:
-    0 0 16px rgba(255, 0, 0, 0.45),
-    inset 0 0 16px rgba(255, 0, 0, 0.14);
-  backdrop-filter: blur(5px);
-  animation: buttonPulse 2s ease-in-out infinite alternate;
-  transition: 0.2s;
+  box-shadow: 0 0 20px red;
 }
 
-.menu-btn:hover,
-.menu-btn:active {
-  transform: scale(1.06);
-  background: rgba(120, 0, 0, 0.85);
-  box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
-}
-
-.play-btn {
-  border-color: rgba(255, 230, 120, 0.95);
+.menu-btn:hover {
+  transform: scale(1.05);
 }
 
 @keyframes slowZoom {
   from {
-    transform: scale(1) translate(0, 0);
-    filter: brightness(0.95);
-  }
-
-  to {
-    transform: scale(1.08) translate(-1.5%, -1%);
-    filter: brightness(1.08);
-  }
-}
-
-@keyframes rainMove {
-  from {
-    transform: translateY(-80px);
-  }
-
-  to {
-    transform: translateY(80px);
-  }
-}
-
-@keyframes fogMove {
-  from {
-    transform: translateX(-35px);
-    opacity: 0.35;
-  }
-
-  to {
-    transform: translateX(35px);
-    opacity: 0.75;
-  }
-}
-
-@keyframes buttonPulse {
-  from {
-    box-shadow:
-      0 0 12px rgba(255, 0, 0, 0.35),
-      inset 0 0 10px rgba(255, 0, 0, 0.08);
-  }
-
-  to {
-    box-shadow:
-      0 0 28px rgba(255, 0, 0, 0.75),
-      inset 0 0 20px rgba(255, 0, 0, 0.18);
-  }
-}
-
-#readmeOverlay {
-  animation: fadeIn 0.2s ease;
-}
-
-.readme-box {
-  animation: popIn 0.22s ease;
-}
-
-.close-readme:hover {
-  transform: scale(1.05);
-  background: #ff2b33 !important;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-
-  to {
-    opacity: 1;
     transform: scale(1);
   }
-}
 
-@media (max-width: 700px) {
-  .menu-buttons {
-    bottom: max(28px, env(safe-area-inset-bottom));
-    gap: 10px;
-  }
-
-  .menu-btn {
-    width: min(240px, 76vw);
-    padding: 12px 0;
-    letter-spacing: 3px;
+  to {
+    transform: scale(1.06);
   }
 }
