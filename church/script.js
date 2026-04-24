@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const ui = {
     ambientMusic: document.getElementById("ambientMusic"),
+    chaseMusic: document.getElementById("chaseMusic"),
     jumpscareSound: document.getElementById("jumpscareSound"),
     hud: document.getElementById("hud"),
     gameWrap: document.getElementById("gameWrap"),
@@ -93,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (ui.menuBtn) {
     ui.menuBtn.addEventListener("click", () => {
+      stopAllMusic();
       window.location.href = "../";
     });
   }
@@ -119,18 +121,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startAmbientMusic() {
     const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
-    if (!ui.ambientMusic || muted) return;
+    if (muted) return;
 
-    ui.ambientMusic.volume = 0.35;
-    ui.ambientMusic.muted = false;
-
-    ui.ambientMusic.play().catch(() => {});
+    if (ui.ambientMusic) {
+      ui.ambientMusic.volume = 0.35;
+      ui.ambientMusic.muted = false;
+      ui.ambientMusic.play().catch(() => {});
+    }
   }
 
-  function stopAmbientMusic() {
-    if (!ui.ambientMusic) return;
-    ui.ambientMusic.pause();
-    ui.ambientMusic.currentTime = 0;
+  function updateMusicState() {
+    const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
+    if (muted || !gameState.gameStarted || gameState.exitChallengeStarted) return;
+
+    if (!ui.ambientMusic || !ui.chaseMusic) return;
+
+    const connectedRooms = rooms[gameState.playerRoom] || [];
+    const killerNear =
+      connectedRooms.includes(gameState.killerRoom) ||
+      gameState.playerRoom === gameState.killerRoom;
+
+    if (killerNear) {
+      ui.ambientMusic.pause();
+
+      ui.chaseMusic.muted = false;
+      ui.chaseMusic.volume = 0.45;
+      ui.chaseMusic.play().catch(() => {});
+    } else {
+      ui.chaseMusic.pause();
+      ui.chaseMusic.currentTime = 0;
+
+      ui.ambientMusic.muted = false;
+      ui.ambientMusic.volume = 0.35;
+      ui.ambientMusic.play().catch(() => {});
+    }
+  }
+
+  function stopAllMusic() {
+    if (ui.ambientMusic) {
+      ui.ambientMusic.pause();
+      ui.ambientMusic.currentTime = 0;
+    }
+
+    if (ui.chaseMusic) {
+      ui.chaseMusic.pause();
+      ui.chaseMusic.currentTime = 0;
+    }
   }
 
   function playJumpscareSound() {
@@ -182,7 +218,6 @@ document.addEventListener("DOMContentLoaded", () => {
     exitTimer = null;
 
     initAudio();
-    startAmbientMusic();
     createPlayerLight();
 
     gameState = {
@@ -201,6 +236,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showMessage("Collect the 6 cursed letters. Then survive the Exit test.");
     updateUI();
+    startAmbientMusic();
+    updateMusicState();
   }
 
   function movePlayer(room) {
@@ -314,6 +351,12 @@ document.addEventListener("DOMContentLoaded", () => {
     gameState.exitChallengeStarted = true;
     exitTimeLeft = 5;
 
+    if (ui.ambientMusic) ui.ambientMusic.pause();
+    if (ui.chaseMusic) {
+      ui.chaseMusic.volume = 0.55;
+      ui.chaseMusic.play().catch(() => {});
+    }
+
     ui.codeOverlay.classList.remove("hidden");
     ui.codeInput.value = "";
     ui.codeHint.textContent = `Letters found: ${getRevealedWordDisplay()}`;
@@ -359,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function winGame() {
     gameState.gameStarted = false;
-    stopAmbientMusic();
+    stopAllMusic();
 
     ui.codeOverlay.classList.add("hidden");
     ui.endTitle.textContent = "FINAL BOSS COMPLETE!";
@@ -371,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loseGame() {
     gameState.gameStarted = false;
-    stopAmbientMusic();
+    stopAllMusic();
 
     ui.endTitle.textContent = "Caught!";
     ui.endText.textContent = "The killer found you in the church.";
@@ -395,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
     moveToken(ui.playerToken, gameState.playerRoom);
     moveToken(ui.killerToken, gameState.killerRoom);
     moveLight(gameState.playerRoom);
+    updateMusicState();
   }
 
   function getRevealedWordDisplay() {
@@ -419,7 +463,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!playerLight || !roomPositions[room]) return;
 
     const pos = roomPositions[room];
-
     playerLight.style.top = `${pos.top}%`;
     playerLight.style.left = `${pos.left}%`;
   }
