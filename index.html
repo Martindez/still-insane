@@ -8,14 +8,16 @@
 </head>
 <body>
 
-  <main class="menu-screen">
+  <main class="menu-screen" onclick="unlockAudio()">
     <div class="menu-buttons">
       <button onclick="playGame()">PLAY</button>
       <button onclick="toggleMute()" id="muteBtn">MUTE</button>
       <button onclick="openReadMe()">READ ME</button>
     </div>
 
-    <audio id="menuMusic" src="assets/game-ambient.mp3" loop autoplay></audio>
+    <audio id="menuMusic" loop autoplay muted>
+      <source src="assets/game-ambient.mp3" type="audio/mpeg" />
+    </audio>
   </main>
 
   <script src="script.js"></script>
