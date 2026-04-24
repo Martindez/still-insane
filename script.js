@@ -32,6 +32,7 @@ function toggleMute() {
 
   if (muted) {
     menuMusic.pause();
+    musicStarted = false;
   } else {
     startMusic();
   }
