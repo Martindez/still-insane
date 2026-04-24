@@ -23,25 +23,21 @@ document.addEventListener("DOMContentLoaded", () => {
     Exit: { top: 91, left: 50 }
   };
 
-  const secretWord = "INSANE";
+  const secretWord = "MONSTER";
 
-  const relicRooms = [
+  const allChurchRelicRooms = [
     "Bell Tower",
     "Storage",
     "Main Hall",
     "Confession",
     "Altar",
-    "Graveyard"
+    "Graveyard",
+    "Basement"
   ];
 
-  const relicLetters = {
-    "Bell Tower": "I",
-    Storage: "N",
-    "Main Hall": "S",
-    Confession: "A",
-    Altar: "N",
-    Graveyard: "E"
-  };
+  let relicRooms = [];
+  let relicLetters = {};
+  let hiddenLetterIndex = 0;
 
   const totalRelics = 6;
 
@@ -122,6 +118,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("click", startAmbientMusic);
   document.addEventListener("touchstart", startAmbientMusic);
+
+  function setupRandomWordGame() {
+    hiddenLetterIndex = Math.floor(Math.random() * secretWord.length);
+
+    relicRooms = allChurchRelicRooms.filter((_, index) => index !== hiddenLetterIndex);
+
+    relicLetters = {};
+
+    relicRooms.forEach((room, index) => {
+      const wordIndex = index >= hiddenLetterIndex ? index + 1 : index;
+      relicLetters[room] = secretWord[wordIndex];
+    });
+  }
 
   function startAmbientMusic() {
     const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
@@ -277,6 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
     exitTimer = null;
     killerTimer = null;
 
+    setupRandomWordGame();
     initAudio();
     createPlayerLight();
 
@@ -294,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ui.hud) ui.hud.classList.remove("hidden");
     if (ui.gameWrap) ui.gameWrap.classList.remove("hidden");
 
-    showMessage("Collect the 6 cursed letters. The killer is hunting even when you wait.");
+    showMessage("Collect 6 letters. One letter is missing. Guess the word at the Exit.");
     updateUI();
     startAmbientMusic();
     startKillerTimer();
@@ -344,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (room === "Exit" && gameState.collectedRelics.length < totalRelics) {
-      showMessage("The Exit is sealed. Find every cursed letter first.");
+      showMessage("The Exit is sealed. Find all 6 revealed letters first.");
       playTone(130, 0.15, "square", 0.03);
       return;
     }
@@ -498,7 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
       clearInterval(exitTimer);
       winGame();
     } else {
-      failExitChallenge("Wrong word. The killer heard you.");
+      failExitChallenge("Wrong word. The monster was waiting.");
     }
   }
 
@@ -511,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
       gameState.playerRoom = "Exit";
       gameState.killerRoom = "Exit";
       checkDanger();
-    }, 600);
+    }, 450);
   }
 
   function winGame() {
@@ -521,7 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ui.codeOverlay.classList.add("hidden");
     ui.endTitle.textContent = "FINAL BOSS COMPLETE!";
-    ui.endText.textContent = "You solved the church word and escaped Still Insane.";
+    ui.endText.textContent = "You guessed the missing letter and escaped Still Insane.";
     ui.hud.classList.add("hidden");
     ui.gameWrap.classList.add("hidden");
     ui.endScreen.classList.remove("hidden");
@@ -533,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
     stopAllMusic();
 
     ui.endTitle.textContent = "Caught!";
-    ui.endText.textContent = "The killer found you in the church.";
+    ui.endText.textContent = "The monster found you in the church.";
     ui.hud.classList.add("hidden");
     ui.gameWrap.classList.add("hidden");
 
@@ -569,9 +579,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getRevealedWordDisplay() {
-    return relicRooms
-      .map((room) => gameState.collectedRelics.includes(room) ? relicLetters[room] : "_")
-      .join(" ");
+    const letters = [];
+
+    for (let i = 0; i < secretWord.length; i++) {
+      if (i === hiddenLetterIndex) {
+        letters.push("_");
+        continue;
+      }
+
+      const roomIndex = i > hiddenLetterIndex ? i - 1 : i;
+      const room = relicRooms[roomIndex];
+
+      if (gameState.collectedRelics.includes(room)) {
+        letters.push(secretWord[i]);
+      } else {
+        letters.push("_");
+      }
+    }
+
+    return letters.join(" ");
   }
 
   function moveToken(token, room) {
