@@ -6,6 +6,7 @@ const readPanel = document.getElementById("readPanel");
 const closeReadBtn = document.getElementById("closeReadBtn");
 
 let muted = localStorage.getItem("rabbitEscapeMuted") === "true";
+let musicStarted = false;
 
 menuMusic.volume = 0.5;
 menuMusic.muted = muted;
@@ -15,9 +16,13 @@ function updateMuteButton() {
 }
 
 function startMusic() {
-  if (!muted) {
-    menuMusic.play().catch(() => {});
-  }
+  if (muted || musicStarted) return;
+
+  menuMusic.play()
+    .then(() => {
+      musicStarted = true;
+    })
+    .catch(() => {});
 }
 
 function toggleMute() {
@@ -46,6 +51,9 @@ function closeReadMe() {
   readPanel.classList.remove("show");
 }
 
+document.addEventListener("click", startMusic);
+document.addEventListener("touchstart", startMusic);
+
 playBtn.addEventListener("click", startGame);
 readBtn.addEventListener("click", openReadMe);
 muteBtn.addEventListener("click", toggleMute);
@@ -56,7 +64,5 @@ readPanel.addEventListener("click", (event) => {
     closeReadMe();
   }
 });
-
-document.addEventListener("click", startMusic, { once: true });
 
 updateMuteButton();
