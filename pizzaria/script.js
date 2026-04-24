@@ -40,7 +40,7 @@ let gameState = {
   killerRoom: "Storage",
   keyRooms: [],
   collectedKeys: [],
-  hearts: 3,
+  hearts: 1,
   gameStarted: false
 };
 
@@ -49,6 +49,7 @@ let playerLight = null;
 
 const ui = {
   ambientMusic: document.getElementById("ambientMusic"),
+  jumpscareSound: document.getElementById("jumpscareSound"),
   hud: document.getElementById("hud"),
   gameWrap: document.getElementById("gameWrap"),
   endScreen: document.getElementById("endScreen"),
@@ -92,6 +93,21 @@ function startAmbientMusic() {
   ui.ambientMusic.volume = 0.35;
   ui.ambientMusic.muted = false;
   ui.ambientMusic.play().catch(() => {});
+}
+
+function stopAmbientMusic() {
+  if (!ui.ambientMusic) return;
+
+  ui.ambientMusic.pause();
+  ui.ambientMusic.currentTime = 0;
+}
+
+function playJumpscareSound() {
+  if (!ui.jumpscareSound) return;
+
+  ui.jumpscareSound.currentTime = 0;
+  ui.jumpscareSound.volume = 0.85;
+  ui.jumpscareSound.play().catch(() => {});
 }
 
 function createPlayerLight() {
@@ -140,7 +156,7 @@ function startGame() {
     killerRoom: "Storage",
     keyRooms: shuffle([...possibleKeyRooms]).slice(0, totalKeys),
     collectedKeys: [],
-    hearts: 3,
+    hearts: 1,
     gameStarted: true
   };
 
@@ -197,18 +213,11 @@ function moveKiller() {
 
 function checkDanger() {
   if (gameState.playerRoom === gameState.killerRoom) {
-    gameState.hearts -= 1;
+    gameState.hearts = 0;
     flash();
+    playJumpscareSound();
     showJumpscare();
-    playTone(120, 0.25, "sawtooth", 0.06);
-
-    if (gameState.hearts <= 0) {
-      loseGame();
-    } else {
-      gameState.playerRoom = "Dining";
-      gameState.killerRoom = "Storage";
-      showMessage("The rabbit caught you! You escaped back to Dining.");
-    }
+    loseGame();
   }
 }
 
@@ -229,16 +238,21 @@ function checkWin() {
 
 function loseGame() {
   gameState.gameStarted = false;
-  ui.endTitle.textContent = "Game Over";
-  ui.endText.textContent = "The killer rabbit caught you too many times.";
+  stopAmbientMusic();
+
+  ui.endTitle.textContent = "Caught!";
+  ui.endText.textContent = "The killer rabbit found you.";
   ui.hud.classList.add("hidden");
   ui.gameWrap.classList.add("hidden");
-  ui.endScreen.classList.remove("hidden");
+
+  setTimeout(() => {
+    ui.endScreen.classList.remove("hidden");
+  }, 900);
 }
 
 function updateUI() {
   ui.keyCount.textContent = gameState.collectedKeys.length;
-  ui.hearts.textContent = "❤️ ".repeat(gameState.hearts).trim();
+  ui.hearts.textContent = gameState.hearts > 0 ? "❤️" : "💔";
   ui.playerRoom.textContent = gameState.playerRoom;
   ui.killerRoom.textContent = gameState.killerRoom;
   ui.exitState.textContent = gameState.collectedKeys.length >= totalKeys ? "Open" : "Locked";
@@ -299,7 +313,7 @@ function showJumpscare() {
   ui.jumpscareOverlay.classList.remove("hidden");
   setTimeout(() => {
     ui.jumpscareOverlay.classList.add("hidden");
-  }, 650);
+  }, 900);
 }
 
 function shuffle(array) {

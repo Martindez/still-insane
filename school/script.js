@@ -24,7 +24,7 @@ let gameState = {
   killerRoom: "Kitchen",
   keyRooms: [],
   collectedKeys: [],
-  hearts: 3,
+  hearts: 1,
   gameStarted: false
 };
 
@@ -33,11 +33,13 @@ let playerLight = null;
 
 const ui = {
   ambientMusic: document.getElementById("ambientMusic"),
+  jumpscareSound: document.getElementById("jumpscareSound"),
   hud: document.getElementById("hud"),
   gameWrap: document.getElementById("gameWrap"),
   endScreen: document.getElementById("endScreen"),
   restartBtn: document.getElementById("restartBtn"),
   nextLevelBtn: document.getElementById("nextLevelBtn"),
+  menuBtn: document.getElementById("menuBtn"),
   keyCount: document.getElementById("keyCount"),
   hearts: document.getElementById("hearts"),
   playerRoom: document.getElementById("playerRoom"),
@@ -59,6 +61,9 @@ ui.restartBtn.addEventListener("click", startGame);
 ui.nextLevelBtn.addEventListener("click", () => {
   window.location.href = "../pizzaria/";
 });
+ui.menuBtn.addEventListener("click", () => {
+  window.location.href = "../";
+});
 
 ui.roomButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -76,6 +81,21 @@ function startAmbientMusic() {
   ui.ambientMusic.volume = 0.35;
   ui.ambientMusic.muted = false;
   ui.ambientMusic.play().catch(() => {});
+}
+
+function stopAmbientMusic() {
+  if (!ui.ambientMusic) return;
+
+  ui.ambientMusic.pause();
+  ui.ambientMusic.currentTime = 0;
+}
+
+function playJumpscareSound() {
+  if (!ui.jumpscareSound) return;
+
+  ui.jumpscareSound.currentTime = 0;
+  ui.jumpscareSound.volume = 0.85;
+  ui.jumpscareSound.play().catch(() => {});
 }
 
 function createPlayerLight() {
@@ -124,13 +144,14 @@ function startGame() {
     killerRoom: "Kitchen",
     keyRooms: shuffle([...possibleKeyRooms]).slice(0, totalKeys),
     collectedKeys: [],
-    hearts: 3,
+    hearts: 1,
     gameStarted: true
   };
 
   ui.endScreen.classList.add("hidden");
   ui.hud.classList.remove("hidden");
   ui.gameWrap.classList.remove("hidden");
+  ui.nextLevelBtn.classList.add("hidden");
 
   showMessage("Find all 4 keys, then go to the Exit.");
   updateUI();
@@ -181,18 +202,11 @@ function moveKiller() {
 
 function checkDanger() {
   if (gameState.playerRoom === gameState.killerRoom) {
-    gameState.hearts -= 1;
+    gameState.hearts = 0;
     flash();
+    playJumpscareSound();
     showJumpscare();
-    playTone(120, 0.25, "sawtooth", 0.06);
-
-    if (gameState.hearts <= 0) {
-      loseGame();
-    } else {
-      gameState.playerRoom = "Playground";
-      gameState.killerRoom = "Kitchen";
-      showMessage("The rabbit caught you! You escaped back to the Playground.");
-    }
+    loseGame();
   }
 }
 
@@ -214,17 +228,22 @@ function checkWin() {
 
 function loseGame() {
   gameState.gameStarted = false;
-  ui.endTitle.textContent = "Game Over";
-  ui.endText.textContent = "The killer rabbit caught you too many times.";
+  stopAmbientMusic();
+
+  ui.endTitle.textContent = "Caught!";
+  ui.endText.textContent = "The killer rabbit found you.";
   ui.nextLevelBtn.classList.add("hidden");
   ui.hud.classList.add("hidden");
   ui.gameWrap.classList.add("hidden");
-  ui.endScreen.classList.remove("hidden");
+
+  setTimeout(() => {
+    ui.endScreen.classList.remove("hidden");
+  }, 900);
 }
 
 function updateUI() {
   ui.keyCount.textContent = gameState.collectedKeys.length;
-  ui.hearts.textContent = "❤️ ".repeat(gameState.hearts).trim();
+  ui.hearts.textContent = gameState.hearts > 0 ? "❤️" : "💔";
   ui.playerRoom.textContent = gameState.playerRoom;
   ui.killerRoom.textContent = gameState.killerRoom;
   ui.exitState.textContent = gameState.collectedKeys.length >= totalKeys ? "Open" : "Locked";
@@ -285,7 +304,7 @@ function showJumpscare() {
   ui.jumpscareOverlay.classList.remove("hidden");
   setTimeout(() => {
     ui.jumpscareOverlay.classList.add("hidden");
-  }, 650);
+  }, 900);
 }
 
 function shuffle(array) {
