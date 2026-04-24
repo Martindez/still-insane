@@ -47,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let audioContext = null;
   let playerLight = null;
 
+  let playerMovedSinceLastKillerStep = false;
+
   let gameState = {
     playerRoom: "Entrance",
     killerRoom: "Bell Tower",
@@ -121,9 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function setupRandomWordGame() {
     hiddenLetterIndex = Math.floor(Math.random() * secretWord.length);
-
     relicRooms = allChurchRelicRooms.filter((_, index) => index !== hiddenLetterIndex);
-
     relicLetters = {};
 
     relicRooms.forEach((room, index) => {
@@ -148,9 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (muted || !gameState.gameStarted || gameState.exitChallengeStarted) return;
     if (!ui.ambientMusic || !ui.chaseMusic) return;
 
-    const killerNear = isKillerNear();
-
-    if (killerNear) {
+    if (isKillerNear()) {
       ui.ambientMusic.pause();
       ui.chaseMusic.muted = false;
       ui.chaseMusic.volume = 0.48;
@@ -185,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ui.footstepsSound.pause();
     ui.footstepsSound.currentTime = 0;
-    ui.footstepsSound.volume = isKillerNear() ? 0.75 : 0.38;
+    ui.footstepsSound.volume = isKillerNear() ? 0.72 : 0.3;
     ui.footstepsSound.play().catch(() => {});
   }
 
@@ -197,29 +195,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ui.laughterSound.pause();
     ui.laughterSound.currentTime = 0;
-    ui.laughterSound.volume = killerNear ? 0.78 : 0.34;
+    ui.laughterSound.volume = killerNear ? 0.78 : 0.32;
     ui.laughterSound.play().catch(() => {});
-
-    if (!killerNear) {
-      setTimeout(() => {
-        if (!ui.laughterSound || !gameState.gameStarted) return;
-        ui.laughterSound.pause();
-        ui.laughterSound.currentTime = 0;
-        ui.laughterSound.volume = 0.18;
-        ui.laughterSound.play().catch(() => {});
-      }, 450);
-    }
 
     showMessage(killerNear ? "The laugh is close..." : "Something laughs somewhere in the church...");
   }
 
   function maybePlayScareCue() {
-    let chance = 0.08;
+    let chance = 0.05;
 
-    if (gameState.collectedRelics.length >= 2) chance = 0.14;
-    if (gameState.collectedRelics.length >= 4) chance = 0.22;
-    if (gameState.collectedRelics.length >= 5) chance = 0.3;
-
+    if (gameState.collectedRelics.length >= 2) chance = 0.1;
+    if (gameState.collectedRelics.length >= 4) chance = 0.16;
+    if (gameState.collectedRelics.length >= 5) chance = 0.22;
     if (isKillerNear()) chance += 0.12;
 
     if (Math.random() < chance) {
@@ -230,14 +217,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function maybeRingBell() {
     if (gameState.collectedRelics.length < 3) return;
 
-    const chance = gameState.collectedRelics.length >= 5 ? 0.18 : 0.1;
+    const chance = gameState.collectedRelics.length >= 5 ? 0.12 : 0.07;
 
     if (Math.random() < chance) {
       showMessage("The church bell rings...");
       playTone(110, 0.35, "sine", 0.06);
       setTimeout(() => playTone(82, 0.45, "sine", 0.045), 180);
 
-      if (Math.random() < 0.45) {
+      if (Math.random() < 0.3) {
         moveKillerSmart();
       }
     }
@@ -274,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function createPlayerLight() {
     if (playerLight || !ui.mapBoard) return;
-
     playerLight = document.createElement("div");
     playerLight.className = "player-light";
     ui.mapBoard.appendChild(playerLight);
@@ -289,6 +275,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setupRandomWordGame();
     initAudio();
     createPlayerLight();
+
+    playerMovedSinceLastKillerStep = false;
 
     gameState = {
       playerRoom: "Entrance",
@@ -313,17 +301,24 @@ document.addEventListener("DOMContentLoaded", () => {
   function startKillerTimer() {
     clearInterval(killerTimer);
 
-    let speed = 3000;
+    let speed = 4500;
 
-    if (gameState.collectedRelics.length >= 2) speed = 2400;
-    if (gameState.collectedRelics.length >= 4) speed = 1800;
-    if (gameState.collectedRelics.length >= 5) speed = 1300;
+    if (gameState.collectedRelics.length >= 2) speed = 3800;
+    if (gameState.collectedRelics.length >= 4) speed = 3000;
+    if (gameState.collectedRelics.length >= 5) speed = 2400;
 
     killerTimer = setInterval(() => {
       if (!gameState.gameStarted) return;
       if (gameState.exitChallengeStarted) return;
 
-      moveKillerSmart();
+      if (playerMovedSinceLastKillerStep) {
+        moveKillerSmart();
+      } else {
+        moveKillerAwayFromPlayer();
+      }
+
+      playerMovedSinceLastKillerStep = false;
+
       playFootsteps();
       maybePlayScareCue();
       maybeRingBell();
@@ -359,6 +354,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    playerMovedSinceLastKillerStep = true;
+
     gameState.playerRoom = room;
     playTone(430, 0.08, "triangle", 0.035);
     playFootsteps();
@@ -372,9 +369,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     moveKillerSmart();
-    playFootsteps();
 
-    if (gameState.collectedRelics.length >= 4 && Math.random() < 0.35) {
+    if (gameState.collectedRelics.length >= 4 && Math.random() < 0.25) {
       moveKillerSmart();
       showMessage("The church bell rings. The killer moves again.");
       playTone(96, 0.25, "sine", 0.05);
@@ -409,16 +405,41 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function moveKillerSmart() {
-    const chaseChance = gameState.collectedRelics.length >= 3 ? 0.92 : 0.68;
+    const chaseChance = gameState.collectedRelics.length >= 3 ? 0.68 : 0.42;
     const path = findShortestPath(gameState.killerRoom, gameState.playerRoom);
 
     if (path.length > 1 && Math.random() < chaseChance) {
       gameState.killerRoom = path[1];
     } else {
-      const options = rooms[gameState.killerRoom].filter((room) => room !== "Exit");
-      if (options.length > 0) {
-        gameState.killerRoom = options[Math.floor(Math.random() * options.length)];
+      moveKillerRandom();
+    }
+  }
+
+  function moveKillerAwayFromPlayer() {
+    const options = rooms[gameState.killerRoom].filter((room) => room !== "Exit");
+    if (options.length === 0) return;
+
+    let bestRoom = options[0];
+    let bestDistance = -1;
+
+    options.forEach((room) => {
+      const path = findShortestPath(room, gameState.playerRoom);
+      const distance = path.length;
+
+      if (distance > bestDistance) {
+        bestDistance = distance;
+        bestRoom = room;
       }
+    });
+
+    gameState.killerRoom = bestRoom;
+  }
+
+  function moveKillerRandom() {
+    const options = rooms[gameState.killerRoom].filter((room) => room !== "Exit");
+
+    if (options.length > 0) {
+      gameState.killerRoom = options[Math.floor(Math.random() * options.length)];
     }
   }
 
