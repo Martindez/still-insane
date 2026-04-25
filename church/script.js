@@ -322,17 +322,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!connectedRooms.includes(room)) {
       showMessage(`You cannot move from ${gameState.playerRoom} to ${room}.`);
+      playTone(130, 0.15, "square", 0.03);
       return;
     }
 
     if (room === "Exit" && gameState.collectedRelics.length < totalRelics) {
       showMessage("The Exit is sealed. Find all 6 revealed letters first.");
+      playTone(130, 0.15, "square", 0.03);
       return;
     }
 
     playerMovedSinceLastKillerStep = true;
     gameState.playerRoom = room;
 
+    playTone(430, 0.08, "triangle", 0.035);
     collectRelicIfNeeded();
 
     if (room === "Exit" && gameState.collectedRelics.length >= totalRelics) {
