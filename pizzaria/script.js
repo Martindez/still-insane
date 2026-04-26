@@ -163,6 +163,7 @@ function startGame() {
   initAudio();
   startAmbientMusic();
   createPlayerLight();
+  loadSelectedCharacter();
 
   gameState = {
     playerRoom: "Dining",
@@ -347,4 +348,11 @@ function shuffle(array) {
   return array.sort(() => Math.random() - 0.5);
 }
 
+function loadSelectedCharacter() {
+  const character = localStorage.getItem("stillInsaneCharacter") || "player.png";
+
+  if (ui.playerToken) {
+    ui.playerToken.src = `../assets/${character}`;
+  }
+}
 startGame();

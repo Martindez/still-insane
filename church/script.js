@@ -259,6 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupRandomWordGame();
     initAudio();
     createPlayerLight();
+    loadSelectedCharacter();
 
     playerMovedSinceLastKillerStep = false;
 
@@ -636,6 +637,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ui.jumpscareOverlay.classList.add("hidden");
     }, 900);
   }
+  function loadSelectedCharacter() {
+  const character = localStorage.getItem("stillInsaneCharacter") || "player.png";
+
+  if (ui.playerToken) {
+    ui.playerToken.src = `../assets/${character}`;
+  }
+}
 
   startGame();
 });
