@@ -14,11 +14,14 @@ const characters = {
 };
 
 function initMenu() {
-  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
-  const savedName = characters[savedCharacter] || "Alansius";
-localStorage.setItem("stillInsaneCharacterName", savedName);
+  const savedCharacter =
+    localStorage.getItem("stillInsaneCharacter") || "player.png";
 
-  updateCharacterPreview(savedCharacter, savedName);
+  const forcedName = characters[savedCharacter] || "Alansius";
+
+  localStorage.setItem("stillInsaneCharacterName", forcedName);
+
+  updateCharacterPreview(savedCharacter, forcedName);
   updateMuteButton();
 
   document.addEventListener("click", startMenuMusic);
@@ -60,10 +63,7 @@ function toggleMute() {
 
 function updateMuteButton() {
   const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
-
-  if (muteBtn) {
-    muteBtn.textContent = muted ? "UNMUTE" : "MUTE";
-  }
+  muteBtn.textContent = muted ? "UNMUTE" : "MUTE";
 }
 
 function openCharacterSelect() {
@@ -75,26 +75,25 @@ function closeCharacterSelect() {
   characterOverlay.classList.add("hidden");
 }
 
-function selectCharacter(fileName, characterName) {
-  localStorage.setItem("stillInsaneCharacter", fileName);
-  localStorage.setItem("stillInsaneCharacterName", characterName);
+function selectCharacter(fileName) {
+  const realName = characters[fileName] || "Alansius";
 
-  updateCharacterPreview(fileName, characterName);
+  localStorage.setItem("stillInsaneCharacter", fileName);
+  localStorage.setItem("stillInsaneCharacterName", realName);
+
+  updateCharacterPreview(fileName, realName);
   markSelectedCharacter();
 }
 
 function updateCharacterPreview(fileName, characterName) {
-  if (selectedCharacterPreview) {
-    selectedCharacterPreview.src = `assets/${fileName}`;
-  }
-
-  if (selectedCharacterName) {
-    selectedCharacterName.textContent = characterName || characters[fileName] || "Survivor";
-  }
+  selectedCharacterPreview.src = `assets/${fileName}`;
+  selectedCharacterName.textContent = characterName;
 }
 
 function markSelectedCharacter() {
-  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
+  const savedCharacter =
+    localStorage.getItem("stillInsaneCharacter") || "player.png";
+
   const cards = document.querySelectorAll(".character-card");
 
   cards.forEach((card) => {
