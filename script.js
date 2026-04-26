@@ -3,6 +3,7 @@ const muteBtn = document.getElementById("muteBtn");
 
 const characterOverlay = document.getElementById("characterOverlay");
 const readmeOverlay = document.getElementById("readmeOverlay");
+const levelOverlay = document.getElementById("levelOverlay");
 
 const selectedCharacterPreview = document.getElementById("selectedCharacterPreview");
 const selectedCharacterName = document.getElementById("selectedCharacterName");
@@ -14,9 +15,7 @@ const characters = {
 };
 
 function initMenu() {
-  const savedCharacter =
-    localStorage.getItem("stillInsaneCharacter") || "player.png";
-
+  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
   const forcedName = characters[savedCharacter] || "Alansius";
 
   localStorage.setItem("stillInsaneCharacterName", forcedName);
@@ -29,7 +28,7 @@ function initMenu() {
 }
 
 function startMenuMusic() {
-  const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
+  const muted = localStorage.getItem("stillInsaneMuted") === "true";
   if (!menuMusic || muted) return;
 
   menuMusic.volume = 0.35;
@@ -43,10 +42,10 @@ function playGame() {
 }
 
 function toggleMute() {
-  const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
+  const muted = localStorage.getItem("stillInsaneMuted") === "true";
   const newMuted = !muted;
 
-  localStorage.setItem("rabbitEscapeMuted", String(newMuted));
+  localStorage.setItem("stillInsaneMuted", String(newMuted));
 
   if (menuMusic) {
     menuMusic.muted = newMuted;
@@ -62,16 +61,21 @@ function toggleMute() {
 }
 
 function updateMuteButton() {
-  const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
-  muteBtn.textContent = muted ? "UNMUTE" : "MUTE";
+  const muted = localStorage.getItem("stillInsaneMuted") === "true";
+
+  if (muteBtn) {
+    muteBtn.textContent = muted ? "UNMUTE" : "MUTE";
+  }
 }
 
 function openCharacterSelect() {
+  if (!characterOverlay) return;
   characterOverlay.classList.remove("hidden");
   markSelectedCharacter();
 }
 
 function closeCharacterSelect() {
+  if (!characterOverlay) return;
   characterOverlay.classList.add("hidden");
 }
 
@@ -86,14 +90,17 @@ function selectCharacter(fileName) {
 }
 
 function updateCharacterPreview(fileName, characterName) {
-  selectedCharacterPreview.src = `assets/${fileName}`;
-  selectedCharacterName.textContent = characterName;
+  if (selectedCharacterPreview) {
+    selectedCharacterPreview.src = `assets/${fileName}`;
+  }
+
+  if (selectedCharacterName) {
+    selectedCharacterName.textContent = characterName;
+  }
 }
 
 function markSelectedCharacter() {
-  const savedCharacter =
-    localStorage.getItem("stillInsaneCharacter") || "player.png";
-
+  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
   const cards = document.querySelectorAll(".character-card");
 
   cards.forEach((card) => {
@@ -104,11 +111,28 @@ function markSelectedCharacter() {
   });
 }
 
+function openLevelSelect() {
+  if (!levelOverlay) return;
+  levelOverlay.classList.remove("hidden");
+}
+
+function closeLevelSelect() {
+  if (!levelOverlay) return;
+  levelOverlay.classList.add("hidden");
+}
+
+function goToLevel(level) {
+  startMenuMusic();
+  window.location.href = `./${level}/`;
+}
+
 function openReadMe() {
+  if (!readmeOverlay) return;
   readmeOverlay.classList.remove("hidden");
 }
 
 function closeReadMe() {
+  if (!readmeOverlay) return;
   readmeOverlay.classList.add("hidden");
 }
 
