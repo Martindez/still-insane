@@ -285,10 +285,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function startKillerTimer() {
     clearInterval(killerTimer);
 
-    let speed = 6000;
-    if (gameState.collectedRelics.length >= 2) speed = 5000;
-    if (gameState.collectedRelics.length >= 4) speed = 4000;
-    if (gameState.collectedRelics.length >= 5) speed = 3200;
+    let speed = 8000;
+    if (gameState.collectedRelics.length >= 2) speed = 6500;
+    if (gameState.collectedRelics.length >= 4) speed = 5200;
+    if (gameState.collectedRelics.length >= 5) speed = 4200;
 
     killerTimer = setInterval(() => {
       if (!gameState.gameStarted || gameState.exitChallengeStarted) return;
