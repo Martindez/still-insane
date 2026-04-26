@@ -26,13 +26,72 @@
     <div class="dark-vignette"></div>
 
     <section class="menu-content">
+      <div class="selected-character-card">
+        <p>Selected Survivor</p>
+        <img id="selectedCharacterPreview" src="assets/player.png" alt="Selected character" />
+        <h2 id="selectedCharacterName">Default Survivor</h2>
+      </div>
+
       <div class="menu-buttons">
         <button class="menu-btn play-btn" type="button" onclick="playGame()">PLAY</button>
+        <button class="menu-btn" type="button" onclick="openCharacterSelect()">CHARACTER</button>
         <button class="menu-btn" id="muteBtn" type="button" onclick="toggleMute()">MUTE</button>
         <button class="menu-btn" type="button" onclick="openReadMe()">READ ME</button>
       </div>
     </section>
   </main>
+
+  <div id="characterOverlay" class="character-overlay hidden">
+    <div class="character-box">
+      <h2>Choose Your Survivor</h2>
+      <p class="small-text">Your choice will be used in every level.</p>
+
+      <div class="character-grid">
+        <button class="character-card" type="button" onclick="selectCharacter('player.png', 'Default Survivor')">
+          <img src="assets/player.png" alt="Default Survivor" />
+          <span>Default Survivor</span>
+        </button>
+
+        <button class="character-card" type="button" onclick="selectCharacter('player2.png', 'Brown Boy')">
+          <img src="assets/player2.png" alt="Brown Boy" />
+          <span>Brown Boy</span>
+        </button>
+
+        <button class="character-card" type="button" onclick="selectCharacter('player3.png', 'Girl Survivor')">
+          <img src="assets/player3.png" alt="Girl Survivor" />
+          <span>Girl Survivor</span>
+        </button>
+      </div>
+
+      <button class="close-panel-btn" type="button" onclick="closeCharacterSelect()">DONE</button>
+    </div>
+  </div>
+
+  <div id="readmeOverlay" class="readme-overlay hidden">
+    <div class="readme-box">
+      <h2>Still Insane</h2>
+      <p class="small-text">A school project by Martin.</p>
+
+      <h3>How to Play</h3>
+      <ul>
+        <li>Tap rooms to move.</li>
+        <li>You can only move to connected rooms.</li>
+        <li>Find all keys or relics before escaping.</li>
+        <li>Avoid the killer.</li>
+        <li>Level 4 has a final word challenge.</li>
+      </ul>
+
+      <h3>Levels</h3>
+      <ul>
+        <li>Level 1: School</li>
+        <li>Level 2: Pizzaria</li>
+        <li>Level 3: Edderkoppen</li>
+        <li>Level 4: Church Final Boss</li>
+      </ul>
+
+      <button class="close-panel-btn" type="button" onclick="closeReadMe()">CLOSE</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

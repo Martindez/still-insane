@@ -1,17 +1,37 @@
 const menuMusic = document.getElementById("menuMusic");
 const muteBtn = document.getElementById("muteBtn");
 
+const characterOverlay = document.getElementById("characterOverlay");
+const readmeOverlay = document.getElementById("readmeOverlay");
+
+const selectedCharacterPreview = document.getElementById("selectedCharacterPreview");
+const selectedCharacterName = document.getElementById("selectedCharacterName");
+
+const characters = {
+  "player.png": "Default Survivor",
+  "player2.png": "Brown Boy",
+  "player3.png": "Girl Survivor"
+};
+
+function initMenu() {
+  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
+  const savedName = localStorage.getItem("stillInsaneCharacterName") || characters[savedCharacter];
+
+  updateCharacterPreview(savedCharacter, savedName);
+  updateMuteButton();
+
+  document.addEventListener("click", startMenuMusic);
+  document.addEventListener("touchstart", startMenuMusic);
+}
+
 function startMenuMusic() {
   const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
   if (!menuMusic || muted) return;
 
-  menuMusic.muted = false;
   menuMusic.volume = 0.35;
+  menuMusic.muted = false;
   menuMusic.play().catch(() => {});
 }
-
-document.addEventListener("click", startMenuMusic);
-document.addEventListener("touchstart", startMenuMusic);
 
 function playGame() {
   startMenuMusic();
@@ -24,54 +44,72 @@ function toggleMute() {
 
   localStorage.setItem("rabbitEscapeMuted", String(newMuted));
 
-  if (newMuted) {
-    menuMusic.pause();
-    menuMusic.muted = true;
-    muteBtn.textContent = "UNMUTE";
-  } else {
-    menuMusic.muted = false;
-    menuMusic.volume = 0.35;
-    menuMusic.play().catch(() => {});
-    muteBtn.textContent = "MUTE";
+  if (menuMusic) {
+    menuMusic.muted = newMuted;
+
+    if (newMuted) {
+      menuMusic.pause();
+    } else {
+      startMenuMusic();
+    }
+  }
+
+  updateMuteButton();
+}
+
+function updateMuteButton() {
+  const muted = localStorage.getItem("rabbitEscapeMuted") === "true";
+
+  if (muteBtn) {
+    muteBtn.textContent = muted ? "UNMUTE" : "MUTE";
   }
 }
 
+function openCharacterSelect() {
+  characterOverlay.classList.remove("hidden");
+  markSelectedCharacter();
+}
+
+function closeCharacterSelect() {
+  characterOverlay.classList.add("hidden");
+}
+
+function selectCharacter(fileName, characterName) {
+  localStorage.setItem("stillInsaneCharacter", fileName);
+  localStorage.setItem("stillInsaneCharacterName", characterName);
+
+  updateCharacterPreview(fileName, characterName);
+  markSelectedCharacter();
+}
+
+function updateCharacterPreview(fileName, characterName) {
+  if (selectedCharacterPreview) {
+    selectedCharacterPreview.src = `assets/${fileName}`;
+  }
+
+  if (selectedCharacterName) {
+    selectedCharacterName.textContent = characterName || characters[fileName] || "Survivor";
+  }
+}
+
+function markSelectedCharacter() {
+  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
+  const cards = document.querySelectorAll(".character-card");
+
+  cards.forEach((card) => {
+    const img = card.querySelector("img");
+    const src = img ? img.getAttribute("src") : "";
+
+    card.classList.toggle("selected", src.includes(savedCharacter));
+  });
+}
+
 function openReadMe() {
-  startMenuMusic();
-
-  if (document.getElementById("readmeOverlay")) return;
-
-  const overlay = document.createElement("div");
-  overlay.id = "readmeOverlay";
-
-  overlay.innerHTML = `
-    <div class="readme-box">
-      <h2>STILL INSANE</h2>
-      <p class="small-text">A school project by Martin</p>
-
-      <h3>HOW TO PLAY</h3>
-      <ul>
-        <li>Click or tap connected rooms to move.</li>
-        <li>Collect all keys in each level.</li>
-        <li>When all keys are collected, the exit opens.</li>
-        <li>If the killer reaches your room, you lose.</li>
-      </ul>
-
-      <h3>LEVELS</h3>
-      <p>Level 1: School<br>Level 2: Pizzaria<br>Level 3: Edderkoppen</p>
-
-      <button class="close-readme" onclick="closeReadMe()">CLOSE</button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
+  readmeOverlay.classList.remove("hidden");
 }
 
 function closeReadMe() {
-  const overlay = document.getElementById("readmeOverlay");
-  if (overlay) overlay.remove();
+  readmeOverlay.classList.add("hidden");
 }
 
-if (localStorage.getItem("rabbitEscapeMuted") === "true") {
-  muteBtn.textContent = "UNMUTE";
-}
+initMenu();
