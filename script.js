@@ -8,9 +8,9 @@ const selectedCharacterPreview = document.getElementById("selectedCharacterPrevi
 const selectedCharacterName = document.getElementById("selectedCharacterName");
 
 const characters = {
-  "player.png": "Default Survivor",
-  "player2.png": "Brown Boy",
-  "player3.png": "Girl Survivor"
+  "player.png": "Alansius",
+  "player2.png": "Pascorali",
+  "player3.png": "Rumi"
 };
 
 function initMenu() {
