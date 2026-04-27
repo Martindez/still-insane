@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Still Insane - The Last Voyage</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <audio id="ambientMusic" src="../assets/game-ambient.mp3" loop preload="auto"></audio>
+
+  <div id="flashOverlay" class="flash-overlay"></div>
+
+  <main class="app">
+    <header class="topbar">
+      <h1>Still Insane</h1>
+      <p>Level 5 · The Last Voyage</p>
+    </header>
+
+    <section id="hud" class="panel">
+      <div class="hud-grid">
+        <div><strong>Ropes:</strong> <span id="ropeCount">0</span>/5</div>
+        <div><strong>Hearts:</strong> <span id="hearts">❤️❤️❤️</span></div>
+        <div><strong>Player:</strong> <span id="playerRoom">Lounge</span></div>
+        <div><strong>Captain:</strong> <span id="captainState">Hidden</span></div>
+        <div><strong>Escape:</strong> <span id="escapeState">Locked</span></div>
+      </div>
+
+      <p id="timerText" class="escape-timer hidden">10</p>
+      <p id="messageText" class="message">Collect 5 ropes to fix the lifeboat.</p>
+    </section>
+
+    <section id="gameWrap" class="panel">
+      <div class="map-board">
+        <img src="./assets/map.jpg" alt="Ship map" class="map-image" />
+
+        <button class="room-hotspot captain-bridge" data-room="Captain Bridge" type="button"></button>
+        <button class="room-hotspot restaurant" data-room="Restaurant" type="button"></button>
+        <button class="room-hotspot hallway" data-room="Hallway" type="button"></button>
+        <button class="room-hotspot crew-quarters" data-room="Crew Quarters" type="button"></button>
+        <button class="room-hotspot rooms-left" data-room="Rooms Left" type="button"></button>
+        <button class="room-hotspot grand-staircase" data-room="Grand Staircase" type="button"></button>
+        <button class="room-hotspot rooms-right" data-room="Rooms Right" type="button"></button>
+        <button class="room-hotspot lounge" data-room="Lounge" type="button"></button>
+        <button class="room-hotspot balcony-deck" data-room="Balcony Deck" type="button"></button>
+        <button class="room-hotspot left-lifeboat" data-room="Left Lifeboat" type="button"></button>
+        <button class="room-hotspot right-lifeboat" data-room="Right Lifeboat" type="button"></button>
+
+        <div id="ropeLayer" class="rope-layer"></div>
+
+        <img id="playerToken" class="token player-token" src="../assets/player.png" alt="Player" />
+        <img id="killerToken" class="token killer-token hidden-captain" src="../assets/killer3.png" alt="Captain" />
+      </div>
+    </section>
+
+    <section id="endScreen" class="panel screen hidden">
+      <h2 id="endTitle">You Escaped!</h2>
+      <p id="endText">You fixed the lifeboat and survived the ship.</p>
+      <button id="restartBtn" class="main-btn" type="button">Play Again</button>
+      <button id="menuBtn" class="main-btn" type="button">Main Menu</button>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
