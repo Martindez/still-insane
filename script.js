@@ -1,139 +1,408 @@
-const menuMusic = document.getElementById("menuMusic");
-const muteBtn = document.getElementById("muteBtn");
+document.addEventListener("DOMContentLoaded", () => {
+  const rooms = {
+    "Captain Bridge": ["Hallway"],
+    Restaurant: ["Hallway"],
+    "Crew Quarters": ["Hallway"],
+    Hallway: ["Captain Bridge", "Restaurant", "Crew Quarters", "Grand Staircase"],
+    "Grand Staircase": ["Hallway", "Rooms Left", "Rooms Right", "Lounge"],
+    "Rooms Left": ["Grand Staircase", "Lounge"],
+    "Rooms Right": ["Grand Staircase", "Lounge"],
+    Lounge: ["Rooms Left", "Rooms Right", "Grand Staircase", "Balcony Deck"],
+    "Balcony Deck": ["Lounge", "Left Lifeboat", "Right Lifeboat"],
+    "Left Lifeboat": ["Balcony Deck"],
+    "Right Lifeboat": ["Balcony Deck"]
+  };
 
-const characterOverlay = document.getElementById("characterOverlay");
-const readmeOverlay = document.getElementById("readmeOverlay");
-const levelOverlay = document.getElementById("levelOverlay");
+  const roomPositions = {
+    "Captain Bridge": { top: 14, left: 50 },
+    Restaurant: { top: 35, left: 28 },
+    Hallway: { top: 36, left: 50 },
+    "Crew Quarters": { top: 35, left: 70 },
+    "Rooms Left": { top: 56, left: 27 },
+    "Grand Staircase": { top: 55, left: 50 },
+    "Rooms Right": { top: 56, left: 71 },
+    Lounge: { top: 75, left: 50 },
+    "Balcony Deck": { top: 91, left: 50 },
+    "Left Lifeboat": { top: 89, left: 8 },
+    "Right Lifeboat": { top: 89, left: 92 }
+  };
 
-const selectedCharacterPreview = document.getElementById("selectedCharacterPreview");
-const selectedCharacterName = document.getElementById("selectedCharacterName");
+  const possibleRopeRooms = [
+    "Captain Bridge",
+    "Restaurant",
+    "Crew Quarters",
+    "Rooms Left",
+    "Rooms Right",
+    "Grand Staircase",
+    "Lounge"
+  ];
 
-const characters = {
-  "player.png": "Alansius",
-  "player2.png": "Pascorali",
-  "player3.png": "Rumi"
-};
+  const captainRooms = [
+    "Captain Bridge",
+    "Restaurant",
+    "Hallway",
+    "Crew Quarters",
+    "Rooms Left",
+    "Grand Staircase",
+    "Rooms Right",
+    "Lounge",
+    "Balcony Deck"
+  ];
 
-function initMenu() {
-  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
-  const forcedName = characters[savedCharacter] || "Alansius";
+  const totalRopes = 5;
+  const maxHearts = 3;
 
-  localStorage.setItem("stillInsaneCharacterName", forcedName);
+  let escapeTimer = null;
+  let captainTimer = null;
+  let escapeTimeLeft = 10;
 
-  updateCharacterPreview(savedCharacter, forcedName);
-  updateMuteButton();
+  let gameState = {
+    playerRoom: "Lounge",
+    captainRoom: "Captain Bridge",
+    ropeRooms: [],
+    collectedRopes: [],
+    hearts: maxHearts,
+    gameStarted: false,
+    escapeStarted: false,
+    correctBoat: "Left Lifeboat"
+  };
 
-  document.addEventListener("click", startMenuMusic);
-  document.addEventListener("touchstart", startMenuMusic);
-}
+  const ui = {
+    ambientMusic: document.getElementById("ambientMusic"),
+    hud: document.getElementById("hud"),
+    gameWrap: document.getElementById("gameWrap"),
+    endScreen: document.getElementById("endScreen"),
+    restartBtn: document.getElementById("restartBtn"),
+    menuBtn: document.getElementById("menuBtn"),
+    ropeCount: document.getElementById("ropeCount"),
+    hearts: document.getElementById("hearts"),
+    playerRoom: document.getElementById("playerRoom"),
+    captainState: document.getElementById("captainState"),
+    escapeState: document.getElementById("escapeState"),
+    messageText: document.getElementById("messageText"),
+    timerText: document.getElementById("timerText"),
+    endTitle: document.getElementById("endTitle"),
+    endText: document.getElementById("endText"),
+    playerToken: document.getElementById("playerToken"),
+    killerToken: document.getElementById("killerToken"),
+    ropeLayer: document.getElementById("ropeLayer"),
+    flashOverlay: document.getElementById("flashOverlay"),
+    roomButtons: document.querySelectorAll(".room-hotspot")
+  };
 
-function startMenuMusic() {
-  const muted = localStorage.getItem("stillInsaneMuted") === "true";
-  if (!menuMusic || muted) return;
+  ui.restartBtn.addEventListener("click", startGame);
 
-  menuMusic.volume = 0.35;
-  menuMusic.muted = false;
-  menuMusic.play().catch(() => {});
-}
+  ui.menuBtn.addEventListener("click", () => {
+    stopMusic();
+    clearInterval(captainTimer);
+    clearInterval(escapeTimer);
+    window.location.href = "../";
+  });
 
-function playGame() {
-  startMenuMusic();
-  window.location.href = "./school/";
-}
+  ui.roomButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      startMusic();
+      movePlayer(button.dataset.room);
+    });
+  });
 
-function toggleMute() {
-  const muted = localStorage.getItem("stillInsaneMuted") === "true";
-  const newMuted = !muted;
+  document.addEventListener("click", startMusic);
+  document.addEventListener("touchstart", startMusic);
 
-  localStorage.setItem("stillInsaneMuted", String(newMuted));
+  function isMuted() {
+    return localStorage.getItem("stillInsaneMuted") === "true";
+  }
 
-  if (menuMusic) {
-    menuMusic.muted = newMuted;
+  function startMusic() {
+    if (isMuted() || !ui.ambientMusic) return;
 
-    if (newMuted) {
-      menuMusic.pause();
-    } else {
-      startMenuMusic();
+    ui.ambientMusic.volume = gameState.escapeStarted ? 0.48 : 0.35;
+    ui.ambientMusic.muted = false;
+    ui.ambientMusic.play().catch(() => {});
+  }
+
+  function stopMusic() {
+    if (!ui.ambientMusic) return;
+    ui.ambientMusic.pause();
+    ui.ambientMusic.currentTime = 0;
+  }
+
+  function loadSelectedCharacter() {
+    const character = localStorage.getItem("stillInsaneCharacter") || "player.png";
+
+    if (ui.playerToken) {
+      ui.playerToken.src = `../assets/${character}`;
     }
   }
 
-  updateMuteButton();
-}
+  function startGame() {
+    clearInterval(captainTimer);
+    clearInterval(escapeTimer);
 
-function updateMuteButton() {
-  const muted = localStorage.getItem("stillInsaneMuted") === "true";
+    gameState = {
+      playerRoom: "Lounge",
+      captainRoom: "Captain Bridge",
+      ropeRooms: shuffle([...possibleRopeRooms]).slice(0, totalRopes),
+      collectedRopes: [],
+      hearts: maxHearts,
+      gameStarted: true,
+      escapeStarted: false,
+      correctBoat: Math.random() < 0.5 ? "Left Lifeboat" : "Right Lifeboat"
+    };
 
-  if (muteBtn) {
-    muteBtn.textContent = muted ? "UNMUTE" : "MUTE";
-  }
-}
+    loadSelectedCharacter();
 
-function openCharacterSelect() {
-  if (!characterOverlay) return;
-  characterOverlay.classList.remove("hidden");
-  markSelectedCharacter();
-}
+    ui.endScreen.classList.add("hidden");
+    ui.hud.classList.remove("hidden");
+    ui.gameWrap.classList.remove("hidden");
+    ui.timerText.classList.add("hidden");
 
-function closeCharacterSelect() {
-  if (!characterOverlay) return;
-  characterOverlay.classList.add("hidden");
-}
-
-function selectCharacter(fileName) {
-  const realName = characters[fileName] || "Alansius";
-
-  localStorage.setItem("stillInsaneCharacter", fileName);
-  localStorage.setItem("stillInsaneCharacterName", realName);
-
-  updateCharacterPreview(fileName, realName);
-  markSelectedCharacter();
-}
-
-function updateCharacterPreview(fileName, characterName) {
-  if (selectedCharacterPreview) {
-    selectedCharacterPreview.src = `assets/${fileName}`;
+    showMessage("Collect 5 ropes to fix the lifeboat.");
+    updateUI();
+    startMusic();
+    startCaptainTimer();
   }
 
-  if (selectedCharacterName) {
-    selectedCharacterName.textContent = characterName;
+  function startCaptainTimer() {
+    clearInterval(captainTimer);
+
+    captainTimer = setInterval(() => {
+      if (!gameState.gameStarted) return;
+
+      moveCaptainRandomly();
+      updateCaptainVisibility();
+
+      if (gameState.playerRoom === gameState.captainRoom) {
+        captainCatch();
+      }
+    }, gameState.escapeStarted ? 2600 : 4200);
   }
-}
 
-function markSelectedCharacter() {
-  const savedCharacter = localStorage.getItem("stillInsaneCharacter") || "player.png";
-  const cards = document.querySelectorAll(".character-card");
+  function movePlayer(room) {
+    if (!gameState.gameStarted) return;
 
-  cards.forEach((card) => {
-    const img = card.querySelector("img");
-    const src = img ? img.getAttribute("src") : "";
+    const connectedRooms = rooms[gameState.playerRoom];
 
-    card.classList.toggle("selected", src.includes(savedCharacter));
-  });
-}
+    if (!connectedRooms.includes(room)) {
+      showMessage(`You cannot move from ${gameState.playerRoom} to ${room}.`);
+      return;
+    }
 
-function openLevelSelect() {
-  if (!levelOverlay) return;
-  levelOverlay.classList.remove("hidden");
-}
+    if ((room === "Left Lifeboat" || room === "Right Lifeboat") && !gameState.escapeStarted) {
+      showMessage("The lifeboats need ropes first.");
+      return;
+    }
 
-function closeLevelSelect() {
-  if (!levelOverlay) return;
-  levelOverlay.classList.add("hidden");
-}
+    gameState.playerRoom = room;
 
-function goToLevel(level) {
-  startMenuMusic();
-  window.location.href = `./${level}/`;
-}
+    collectRopeIfNeeded();
 
-function openReadMe() {
-  if (!readmeOverlay) return;
-  readmeOverlay.classList.remove("hidden");
-}
+    if (gameState.escapeStarted && (room === "Left Lifeboat" || room === "Right Lifeboat")) {
+      checkBoatEscape(room);
+      return;
+    }
 
-function closeReadMe() {
-  if (!readmeOverlay) return;
-  readmeOverlay.classList.add("hidden");
-}
+    if (gameState.playerRoom === gameState.captainRoom) {
+      captainCatch();
+      return;
+    }
 
-initMenu();
+    updateUI();
+  }
+
+  function collectRopeIfNeeded() {
+    const room = gameState.playerRoom;
+
+    if (gameState.ropeRooms.includes(room) && !gameState.collectedRopes.includes(room)) {
+      gameState.collectedRopes.push(room);
+
+      if (gameState.collectedRopes.length >= totalRopes) {
+        startEscapeCountdown();
+      } else {
+        showMessage(`Rope found! ${totalRopes - gameState.collectedRopes.length} left.`);
+      }
+    }
+  }
+
+  function startEscapeCountdown() {
+    gameState.escapeStarted = true;
+    escapeTimeLeft = 10;
+
+    clearInterval(captainTimer);
+    startCaptainTimer();
+
+    ui.timerText.classList.remove("hidden");
+    ui.timerText.textContent = escapeTimeLeft;
+
+    if (ui.ambientMusic) ui.ambientMusic.volume = 0.48;
+
+    showMessage("Hull breach! Escape to a lifeboat now!");
+
+    escapeTimer = setInterval(() => {
+      escapeTimeLeft--;
+      ui.timerText.textContent = escapeTimeLeft;
+
+      if (escapeTimeLeft <= 0) {
+        sinkGame();
+      }
+    }, 1000);
+  }
+
+  function checkBoatEscape(room) {
+    if (room === gameState.correctBoat) {
+      winGame();
+      return;
+    }
+
+    gameState.hearts--;
+    flash();
+    gameState.playerRoom = "Balcony Deck";
+
+    if (gameState.hearts <= 0) {
+      loseGame("Wrong lifeboat. The ship swallowed you.");
+    } else {
+      showMessage("Wrong lifeboat! Try the other one!");
+      updateUI();
+    }
+  }
+
+  function moveCaptainRandomly() {
+    let options = captainRooms.filter((room) => room !== gameState.playerRoom);
+
+    if (Math.random() < 0.25) {
+      const nearby = rooms[gameState.playerRoom] || [];
+      options = nearby.filter((room) => captainRooms.includes(room));
+    }
+
+    if (options.length === 0) options = captainRooms;
+
+    gameState.captainRoom = options[Math.floor(Math.random() * options.length)];
+  }
+
+  function updateCaptainVisibility() {
+    if (!ui.killerToken) return;
+
+    const connectedRooms = rooms[gameState.playerRoom] || [];
+    const visible =
+      gameState.playerRoom === gameState.captainRoom ||
+      connectedRooms.includes(gameState.captainRoom);
+
+    if (visible) {
+      ui.killerToken.classList.remove("hidden-captain");
+      ui.killerToken.classList.add("visible-captain");
+      moveToken(ui.killerToken, gameState.captainRoom);
+      ui.captainState.textContent = "Nearby";
+    } else {
+      ui.killerToken.classList.remove("visible-captain");
+      ui.killerToken.classList.add("hidden-captain");
+      ui.captainState.textContent = "Hidden";
+    }
+  }
+
+  function captainCatch() {
+    flash();
+    gameState.hearts--;
+
+    if (gameState.escapeStarted) {
+      escapeTimeLeft = Math.max(1, escapeTimeLeft - 2);
+      ui.timerText.textContent = escapeTimeLeft;
+    }
+
+    if (gameState.hearts <= 0) {
+      loseGame("The ghost captain caught you.");
+      return;
+    }
+
+    gameState.playerRoom = "Lounge";
+    moveCaptainRandomly();
+    showMessage("The Captain found you! You were sent back to the Lounge.");
+    updateUI();
+  }
+
+  function sinkGame() {
+    loseGame("The ship sank before you reached the lifeboat.");
+  }
+
+  function winGame() {
+    gameState.gameStarted = false;
+    clearInterval(captainTimer);
+    clearInterval(escapeTimer);
+    stopMusic();
+
+    ui.endTitle.textContent = "VOYAGE COMPLETE!";
+    ui.endText.textContent = "You fixed the lifeboat and escaped the haunted ship.";
+    ui.hud.classList.add("hidden");
+    ui.gameWrap.classList.add("hidden");
+    ui.endScreen.classList.remove("hidden");
+  }
+
+  function loseGame(text) {
+    gameState.gameStarted = false;
+    clearInterval(captainTimer);
+    clearInterval(escapeTimer);
+    stopMusic();
+
+    ui.endTitle.textContent = "Try Again!";
+    ui.endText.textContent = text;
+    ui.hud.classList.add("hidden");
+    ui.gameWrap.classList.add("hidden");
+
+    setTimeout(() => {
+      ui.endScreen.classList.remove("hidden");
+    }, 500);
+  }
+
+  function updateUI() {
+    ui.ropeCount.textContent = gameState.collectedRopes.length;
+    ui.hearts.textContent = "❤️".repeat(gameState.hearts);
+    ui.playerRoom.textContent = gameState.playerRoom;
+    ui.escapeState.textContent = gameState.escapeStarted ? "Escape Now" : "Need Ropes";
+
+    moveToken(ui.playerToken, gameState.playerRoom);
+    updateCaptainVisibility();
+    drawRopes();
+  }
+
+  function drawRopes() {
+    ui.ropeLayer.innerHTML = "";
+
+    gameState.ropeRooms.forEach((room) => {
+      if (gameState.collectedRopes.includes(room)) return;
+
+      const pos = roomPositions[room];
+      const rope = document.createElement("div");
+      rope.className = "rope";
+      rope.style.top = `${pos.top + 3}%`;
+      rope.style.left = `${pos.left + 4}%`;
+      ui.ropeLayer.appendChild(rope);
+    });
+  }
+
+  function moveToken(token, room) {
+    if (!token || !roomPositions[room]) return;
+
+    const pos = roomPositions[room];
+    token.style.top = `${pos.top}%`;
+    token.style.left = `${pos.left}%`;
+
+    token.classList.remove("moving");
+    void token.offsetWidth;
+    token.classList.add("moving");
+  }
+
+  function flash() {
+    ui.flashOverlay.classList.remove("active");
+    void ui.flashOverlay.offsetWidth;
+    ui.flashOverlay.classList.add("active");
+  }
+
+  function showMessage(text) {
+    ui.messageText.textContent = text;
+  }
+
+  function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+  }
+
+  startGame();
+});
