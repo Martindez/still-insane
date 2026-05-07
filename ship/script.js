@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
   const rooms = {
     "Captain Bridge": ["Hallway"],
-    Restaurant: ["Hallway"],
-    "Crew Quarters": ["Hallway"],
+    Restaurant: ["Hallway", "Grand Staircase"],
+    "Crew Quarters": ["Hallway", "Grand Staircase"],
     Hallway: ["Captain Bridge", "Restaurant", "Crew Quarters", "Grand Staircase"],
-    "Grand Staircase": ["Hallway", "Rooms Left", "Rooms Right", "Lounge"],
+    "Grand Staircase": ["Hallway", "Restaurant", "Crew Quarters", "Rooms Left", "Rooms Right", "Lounge"],
     "Rooms Left": ["Grand Staircase", "Lounge"],
     "Rooms Right": ["Grand Staircase", "Lounge"],
     Lounge: ["Rooms Left", "Rooms Right", "Grand Staircase", "Balcony Deck"],
@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const roomPositions = {
-    "Captain Bridge": { top: 12, left: 50 },
-    Restaurant: { top: 34, left: 33 },
+    "Captain Bridge": { top: 13, left: 50 },
+    Restaurant: { top: 34, left: 32 },
     Hallway: { top: 34, left: 50 },
-    "Crew Quarters": { top: 34, left: 67 },
+    "Crew Quarters": { top: 34, left: 68 },
     "Rooms Left": { top: 55, left: 31 },
-    "Grand Staircase": { top: 55, left: 50 },
+    "Grand Staircase": { top: 54, left: 50 },
     "Rooms Right": { top: 55, left: 69 },
     Lounge: { top: 74, left: 50 },
     "Balcony Deck": { top: 90, left: 50 },
@@ -27,25 +27,37 @@ document.addEventListener("DOMContentLoaded", function () {
     "Right Lifeboat": { top: 83, left: 87 }
   };
 
+  const ropePositions = {
+    "Captain Bridge": { top: 15, left: 52 },
+    Restaurant: { top: 36, left: 33 },
+    Hallway: { top: 36, left: 50 },
+    "Crew Quarters": { top: 36, left: 68 },
+    "Rooms Left": { top: 57, left: 32 },
+    "Grand Staircase": { top: 56, left: 50 },
+    "Rooms Right": { top: 57, left: 68 },
+    Lounge: { top: 76, left: 50 },
+    "Balcony Deck": { top: 91, left: 50 }
+  };
+
   const possibleRopeRooms = [
     "Captain Bridge",
-    "Restaurant",
+    Restaurant,
     "Crew Quarters",
     "Rooms Left",
     "Rooms Right",
     "Grand Staircase",
-    "Lounge"
+    Lounge
   ];
 
   const captainRooms = [
     "Captain Bridge",
-    "Restaurant",
-    "Hallway",
+    Restaurant,
+    Hallway,
     "Crew Quarters",
     "Rooms Left",
     "Grand Staircase",
     "Rooms Right",
-    "Lounge",
+    Lounge,
     "Balcony Deck"
   ];
 
@@ -385,12 +397,12 @@ document.addEventListener("DOMContentLoaded", function () {
     gameState.ropeRooms.forEach(function (room) {
       if (gameState.collectedRopes.includes(room)) return;
 
-      const pos = roomPositions[room];
+      const pos = ropePositions[room] || roomPositions[room];
       const rope = document.createElement("div");
 
       rope.className = "rope";
-      rope.style.top = pos.top + 3 + "%";
-      rope.style.left = pos.left + 4 + "%";
+      rope.style.top = pos.top + "%";
+      rope.style.left = pos.left + "%";
 
       ui.ropeLayer.appendChild(rope);
     });
