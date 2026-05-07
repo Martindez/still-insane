@@ -39,7 +39,7 @@ body {
   object-fit: cover;
   z-index: 1;
   animation: bgFloat 18s ease-in-out infinite alternate;
-  filter: brightness(0.8);
+  filter: brightness(0.82);
 }
 
 .rain {
@@ -54,7 +54,7 @@ body {
     );
   background-size: 3px 18px;
   animation: rainMove 0.4s linear infinite;
-  opacity: 0.25;
+  opacity: 0.24;
   pointer-events: none;
 }
 
@@ -75,7 +75,7 @@ body {
   inset: 0;
   z-index: 4;
   background:
-    radial-gradient(circle, transparent 45%, rgba(0,0,0,0.85) 100%);
+    radial-gradient(circle, transparent 45%, rgba(0,0,0,0.88) 100%);
   pointer-events: none;
 }
 
@@ -91,17 +91,17 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  padding-bottom: 60px;
-  gap: 22px;
+  padding-bottom: 26px;
+  gap: 12px;
 }
 
 /* CHARACTER CARD */
 
 .selected-character-card {
-  background: rgba(0,0,0,0.72);
+  background: rgba(0,0,0,0.74);
   border: 2px solid rgba(255,0,0,0.5);
-  border-radius: 22px;
-  padding: 16px 22px;
+  border-radius: 20px;
+  padding: 10px 16px;
   text-align: center;
   backdrop-filter: blur(10px);
   box-shadow:
@@ -110,24 +110,25 @@ body {
 }
 
 .selected-character-card p {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: #ffd76b;
   font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
+  font-size: 0.9rem;
 }
 
 .selected-character-card img {
-  width: 90px;
-  height: 90px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
   image-rendering: auto;
   filter: drop-shadow(0 0 12px rgba(255,255,255,0.2));
 }
 
 .selected-character-card h2 {
-  margin: 8px 0 0;
-  font-size: 1.2rem;
+  margin: 6px 0 0;
+  font-size: 1rem;
   color: white;
 }
 
@@ -136,17 +137,17 @@ body {
 .menu-buttons {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   width: min(360px, 90%);
 }
 
 .menu-btn {
   border: 2px solid rgba(255,0,0,0.5);
-  background: rgba(0,0,0,0.78);
+  background: rgba(0,0,0,0.8);
   color: white;
-  padding: 18px;
+  padding: 12px;
   border-radius: 18px;
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 900;
   letter-spacing: 4px;
   cursor: pointer;
@@ -289,13 +290,12 @@ body {
 
 @media (max-width: 700px) {
   .menu-content {
-    justify-content: flex-end;
-    padding-bottom: 40px;
-    gap: 18px;
+    padding-bottom: 18px;
+    gap: 10px;
   }
 
   .selected-character-card {
-    transform: scale(0.92);
+    transform: scale(0.9);
   }
 
   .menu-buttons {
@@ -303,8 +303,8 @@ body {
   }
 
   .menu-btn {
-    padding: 16px;
-    font-size: 1rem;
+    padding: 11px;
+    font-size: 0.95rem;
   }
 
   .character-box,
