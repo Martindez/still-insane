@@ -10,7 +10,6 @@ body {
 
 body {
   min-height: 100vh;
-  min-height: 100dvh;
   background: #05080b;
   color: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -19,7 +18,8 @@ body {
 }
 
 .app {
-  width: min(1050px, 100%);
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 10px;
 }
@@ -31,17 +31,17 @@ body {
 
 .topbar h1 {
   margin: 6px 0 2px;
-  font-size: clamp(1.6rem, 5vw, 2.3rem);
+  font-size: 2rem;
 }
 
 .topbar p {
   margin: 0;
-  color: #ccc;
+  color: #cccccc;
 }
 
 .panel {
   background: #141414;
-  border: 1px solid #333;
+  border: 1px solid #333333;
   border-radius: 16px;
   padding: 12px;
   margin-bottom: 10px;
@@ -74,7 +74,7 @@ body {
   margin: 8px 0 0;
   color: #ff3333;
   text-align: center;
-  font-size: clamp(2rem, 8vw, 4rem);
+  font-size: 3rem;
   font-weight: 900;
   text-shadow: 0 0 18px red;
   animation: timerPulse 0.7s infinite alternate;
@@ -100,16 +100,14 @@ body {
 .map-board {
   position: relative;
   width: 100%;
-  max-width: 760px;
+  max-width: 980px;
   margin: 0 auto;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: 18px;
-  background: #000;
+  background: #000000;
   touch-action: manipulation;
-  box-shadow:
-    0 0 25px rgba(0, 0, 0, 0.9),
-    0 0 35px rgba(0, 80, 120, 0.22);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 80, 120, 0.22);
 }
 
 .map-board::after {
@@ -118,8 +116,7 @@ body {
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  background:
-    radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.48)),
+  background: radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.48)),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25));
 }
 
@@ -128,32 +125,96 @@ body {
   height: 100%;
   object-fit: contain;
   display: block;
-  background: #000;
+  background: #000000;
   pointer-events: none;
 }
 
 .room-hotspot {
   position: absolute;
   border: 0;
-  background: transparent !important;
-  outline: none !important;
+  background: transparent;
+  outline: none;
   cursor: pointer;
   z-index: 20;
   touch-action: manipulation;
 }
 
-/* HITBOXES */
-.captain-bridge { top: 4%; left: 32%; width: 36%; height: 16%; }
-.restaurant { top: 24%; left: 13%; width: 27%; height: 17%; }
-.hallway { top: 20%; left: 41%; width: 18%; height: 26%; }
-.crew-quarters { top: 24%; left: 61%; width: 27%; height: 17%; }
-.rooms-left { top: 43%; left: 12%; width: 28%; height: 18%; }
-.grand-staircase { top: 43%; left: 39%; width: 22%; height: 20%; }
-.rooms-right { top: 43%; left: 61%; width: 28%; height: 18%; }
-.lounge { top: 65%; left: 28%; width: 44%; height: 17%; }
-.balcony-deck { top: 84%; left: 27%; width: 46%; height: 13%; }
-.left-lifeboat { top: 78%; left: 0%; width: 18%; height: 19%; }
-.right-lifeboat { top: 78%; left: 82%; width: 18%; height: 19%; }
+.captain-bridge {
+  top: 2%;
+  left: 38%;
+  width: 24%;
+  height: 15%;
+}
+
+.restaurant {
+  top: 25%;
+  left: 24%;
+  width: 18%;
+  height: 16%;
+}
+
+.hallway {
+  top: 22%;
+  left: 44%;
+  width: 12%;
+  height: 24%;
+}
+
+.crew-quarters {
+  top: 25%;
+  left: 58%;
+  width: 18%;
+  height: 16%;
+}
+
+.rooms-left {
+  top: 46%;
+  left: 22%;
+  width: 18%;
+  height: 17%;
+}
+
+.grand-staircase {
+  top: 44%;
+  left: 43%;
+  width: 14%;
+  height: 20%;
+}
+
+.rooms-right {
+  top: 46%;
+  left: 60%;
+  width: 18%;
+  height: 17%;
+}
+
+.lounge {
+  top: 67%;
+  left: 35%;
+  width: 30%;
+  height: 14%;
+}
+
+.balcony-deck {
+  top: 84%;
+  left: 37%;
+  width: 26%;
+  height: 12%;
+}
+
+.left-lifeboat {
+  top: 72%;
+  left: 8%;
+  width: 12%;
+  height: 20%;
+}
+
+.right-lifeboat {
+  top: 72%;
+  left: 80%;
+  width: 12%;
+  height: 20%;
+}
 
 .rope-layer {
   position: absolute;
@@ -164,8 +225,8 @@ body {
 
 .rope {
   position: absolute;
-  width: clamp(22px, 3.4vw, 34px);
-  height: clamp(22px, 3.4vw, 34px);
+  width: 30px;
+  height: 30px;
   transform: translate(-50%, -50%);
 }
 
@@ -175,10 +236,8 @@ body {
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: clamp(20px, 3vw, 30px);
-  filter:
-    drop-shadow(0 0 8px rgba(255, 210, 100, 0.9))
-    drop-shadow(0 8px 8px black);
+  font-size: 26px;
+  filter: drop-shadow(0 0 8px rgba(255, 210, 100, 0.9)) drop-shadow(0 8px 8px black);
   animation: ropeFloat 1.4s infinite alternate;
 }
 
@@ -189,30 +248,22 @@ body {
 }
 
 .player-token {
-  width: clamp(48px, 7vw, 78px);
-  height: clamp(48px, 7vw, 78px);
+  width: 64px;
+  height: 64px;
   transform: translate(-50%, -78%);
   z-index: 8;
-  filter:
-    drop-shadow(0 0 10px rgba(255, 235, 150, 0.9))
-    drop-shadow(0 10px 10px black);
+  filter: drop-shadow(0 0 10px rgba(255, 235, 150, 0.9)) drop-shadow(0 10px 10px black);
   transition: top 0.45s ease, left 0.45s ease;
 }
 
 .killer-token {
-  width: clamp(62px, 9vw, 96px);
-  height: clamp(62px, 9vw, 96px);
+  width: 82px;
+  height: 82px;
   transform: translate(-50%, -82%);
   z-index: 9;
   opacity: 0;
-  filter:
-    drop-shadow(0 0 18px rgba(80, 180, 255, 0.85))
-    drop-shadow(0 12px 12px black);
-  transition:
-    top 0.45s ease,
-    left 0.45s ease,
-    opacity 0.35s ease,
-    filter 0.35s ease;
+  filter: drop-shadow(0 0 18px rgba(80, 180, 255, 0.85)) drop-shadow(0 12px 12px black);
+  transition: top 0.45s ease, left 0.45s ease, opacity 0.35s ease, filter 0.35s ease;
 }
 
 .visible-captain {
@@ -242,40 +293,63 @@ body {
 }
 
 @keyframes ropeFloat {
-  from { transform: translateY(0) scale(0.95); }
-  to { transform: translateY(-5px) scale(1.08); }
+  from {
+    transform: translateY(0) scale(0.95);
+  }
+
+  to {
+    transform: translateY(-5px) scale(1.08);
+  }
 }
 
 @keyframes captainPulse {
   from {
     opacity: 0.35;
-    filter:
-      blur(4px)
-      drop-shadow(0 0 8px rgba(80, 180, 255, 0.5));
+    filter: blur(4px) drop-shadow(0 0 8px rgba(80, 180, 255, 0.5));
   }
 
   to {
     opacity: 0.9;
-    filter:
-      blur(0)
-      drop-shadow(0 0 22px rgba(80, 180, 255, 0.95));
+    filter: blur(0) drop-shadow(0 0 22px rgba(80, 180, 255, 0.95));
   }
 }
 
 @keyframes movePop {
-  0% { scale: 1; }
-  50% { scale: 1.1; }
-  100% { scale: 1; }
+  0% {
+    transform: translate(-50%, -78%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -78%) scale(1.1);
+  }
+
+  100% {
+    transform: translate(-50%, -78%) scale(1);
+  }
 }
 
 @keyframes flash {
-  0%, 100% { opacity: 0; }
-  45% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+
+  45% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes timerPulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.08); }
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.08);
+  }
 }
 
 @media (max-width: 700px) {
@@ -292,17 +366,22 @@ body {
     padding: 8px;
   }
 
-  .map-board {
-    max-width: 100%;
-  }
-
   .player-token {
-    width: clamp(42px, 11vw, 68px);
-    height: clamp(42px, 11vw, 68px);
+    width: 48px;
+    height: 48px;
   }
 
   .killer-token {
-    width: clamp(52px, 13vw, 82px);
-    height: clamp(52px, 13vw, 82px);
+    width: 62px;
+    height: 62px;
+  }
+
+  .rope {
+    width: 24px;
+    height: 24px;
+  }
+
+  .rope::before {
+    font-size: 22px;
   }
 }
