@@ -29,11 +29,12 @@
       <div class="selected-character-card">
         <p>Selected Survivor</p>
         <img id="selectedCharacterPreview" src="assets/player.png" alt="Selected character" />
-        <h2 id="selectedCharacterName">Default Survivor</h2>
+        <h2 id="selectedCharacterName">Alansius</h2>
       </div>
 
       <div class="menu-buttons">
         <button class="menu-btn play-btn" type="button" onclick="playGame()">PLAY</button>
+        <button class="menu-btn" type="button" onclick="openLevelSelect()">LEVELS</button>
         <button class="menu-btn" type="button" onclick="openCharacterSelect()">CHARACTER</button>
         <button class="menu-btn" id="muteBtn" type="button" onclick="toggleMute()">MUTE</button>
         <button class="menu-btn" type="button" onclick="openReadMe()">READ ME</button>
@@ -41,23 +42,54 @@
     </section>
   </main>
 
+  <div id="levelOverlay" class="character-overlay hidden">
+    <div class="character-box">
+      <h2>Choose Level</h2>
+      <p class="small-text">Jump directly to a map.</p>
+
+      <div class="character-grid">
+        <button class="character-card" type="button" onclick="goToLevel('school')">
+          <span>School</span>
+        </button>
+
+        <button class="character-card" type="button" onclick="goToLevel('pizzaria')">
+          <span>Pizzaria</span>
+        </button>
+
+        <button class="character-card" type="button" onclick="goToLevel('edderkoppen')">
+          <span>Edderkoppen</span>
+        </button>
+
+        <button class="character-card" type="button" onclick="goToLevel('church')">
+          <span>Church Final Boss</span>
+        </button>
+
+        <button class="character-card" type="button" onclick="goToLevel('ship')">
+          <span>The Last Voyage</span>
+        </button>
+      </div>
+
+      <button class="close-panel-btn" type="button" onclick="closeLevelSelect()">CLOSE</button>
+    </div>
+  </div>
+
   <div id="characterOverlay" class="character-overlay hidden">
     <div class="character-box">
       <h2>Choose Your Survivor</h2>
       <p class="small-text">Your choice will be used in every level.</p>
 
       <div class="character-grid">
-        <button class="character-card" type="button" onclick="selectCharacter('player.png', 'Default Survivor')">
+        <button class="character-card" type="button" onclick="selectCharacter('player.png')">
           <img src="assets/player.png" alt="Alansius" />
-          <span>Default Alansius</span>
+          <span>Alansius</span>
         </button>
 
-        <button class="character-card" type="button" onclick="selectCharacter('player2.png', 'Brown Boy')">
+        <button class="character-card" type="button" onclick="selectCharacter('player2.png')">
           <img src="assets/player2.png" alt="Pascorali" />
           <span>Pascorali</span>
         </button>
 
-        <button class="character-card" type="button" onclick="selectCharacter('player3.png', 'Girl Survivor')">
+        <button class="character-card" type="button" onclick="selectCharacter('player3.png')">
           <img src="assets/player3.png" alt="Rumi" />
           <span>Rumi</span>
         </button>
@@ -76,9 +108,9 @@
       <ul>
         <li>Tap rooms to move.</li>
         <li>You can only move to connected rooms.</li>
-        <li>Find all keys or relics before escaping.</li>
+        <li>Find keys, relics, or ropes before escaping.</li>
         <li>Avoid the killer.</li>
-        <li>Level 4 has a final word challenge.</li>
+        <li>Some levels have special escape challenges.</li>
       </ul>
 
       <h3>Levels</h3>
@@ -87,6 +119,7 @@
         <li>Level 2: Pizzaria</li>
         <li>Level 3: Edderkoppen</li>
         <li>Level 4: Church Final Boss</li>
+        <li>Level 5: The Last Voyage</li>
       </ul>
 
       <button class="close-panel-btn" type="button" onclick="closeReadMe()">CLOSE</button>
